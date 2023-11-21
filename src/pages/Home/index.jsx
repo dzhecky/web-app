@@ -67,6 +67,10 @@ export default function Home() {
     navigate(`/recipe-detail/${id}`);
   };
 
+  const toEditRecipe = (id) => {
+    navigate(`/edit-recipe/${id}`);
+  };
+
   // Get date
   let date;
   let month;
@@ -200,7 +204,7 @@ export default function Home() {
                           </div>
                         </a>
                         <div className='d-flex mt-4 justify-content-between'>
-                          <a className='btn btn-primary' href='editRecipe.html'>
+                          <a className='btn btn-primary' onClick={() => toEditRecipe(items.id_recipe)}>
                             Edit Recipe
                           </a>
                           <button className='btn btn-danger' type='button' data-bs-toggle='modal' data-bs-target='#deleteRecipeModal'>

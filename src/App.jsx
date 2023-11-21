@@ -8,6 +8,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import Home from './pages/Home';
 import DetailRecipe from './pages/Recipes/DetailRecipe';
 import AddRecipe from './pages/Recipes/AddRecipe';
+import EditRecipe from './pages/Recipes/EditRecipe';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path='/home' element={<Home />} />
           <Route path='/recipe-detail/:id' element={<DetailRecipe />} />
           <Route path='/add-recipe' element={<AddRecipe />} />
+          <Route path='/edit-recipe/:id' element={<EditRecipe />} />
         </Routes>
       </BrowserRouter>
     </>
