@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import DetailRecipe from './pages/Recipes/DetailRecipe';
 import AddRecipe from './pages/Recipes/AddRecipe';
 import EditRecipe from './pages/Recipes/EditRecipe';
+import SearchRecipes from './pages/Recipes/SearchRecipes';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path='/recipe-detail/:id' element={<DetailRecipe />} />
           <Route path='/add-recipe' element={<AddRecipe />} />
           <Route path='/edit-recipe/:id' element={<EditRecipe />} />
+          <Route path='/search-recipes' element={<SearchRecipes />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -77,16 +77,16 @@ export default function Navbar() {
                 </Link>
               </li>
               <li className='nav-item me-5'>
-                <a className='nav-link' href='./searchRecipes.html'>
+                <Link to='/search-recipes' className='nav-link' href='./searchRecipes.html'>
                   <span>Search Recipes</span>
-                </a>
+                </Link>
               </li>
             </ul>
             <span className='me-3 line-photo'></span>
             <div className='contianer d-flex' id='users-logged'>
-              <a href='detailProfile.html'>
+              <Link to='/home'>
                 <img src={user?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover' />
-              </a>
+              </Link>
               <div className='d-flex-column ms-3 me-5 py-2'>
                 <p className='mb-0 fw-medium'>{user?.name}</p>
                 <Link to='/' className='nav-link text-logout' onClick={handleLogout}>

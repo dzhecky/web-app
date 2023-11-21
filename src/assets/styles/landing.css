@@ -14,7 +14,7 @@
 .search,
 .search input,
 .search label {
-  background-color: #efefef;
+  background-color: #efefef !important;
   border: none;
   border-radius: 11px !important;
 }

@@ -1,15 +1,15 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
 import axios from 'axios';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import '../../assets/styles/utility.css';
 import '../../assets/styles/home.css';
-import { useState } from 'react';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 
 const base_url = import.meta.env.VITE_BASE_URL;
 
@@ -28,6 +28,7 @@ export default function Home() {
     };
     localStorage.getItem('name') && setUser(item);
     showDate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -189,12 +190,14 @@ export default function Home() {
                     </div>
                     <div className='container col-md-6 p-0 recipe-info'>
                       <div className='ms-md-4 card-body ps-1 pt-md-0 d-flex flex-column h-100 justify-content-between'>
-                        <h3 className='card-title mb-4 color-grey fw-medium'>{items.title}</h3>
+                        <h3 className='card-title mb-4 color-grey fw-medium' onClick={() => toDetailRecipe(items.id_recipe)}>
+                          {items.title}
+                        </h3>
                         <p className='card-text fw-medium mb-3 color-grey'>
                           <span className='fw-semibold'>Ingredients:</span> <br />
                           {items.ingredients.join(', ')}
                         </p>
-                        <a href='detailRecipe.html' className='text-decoration-none text-dark'>
+                        <a onClick={() => toDetailRecipe(items.id_recipe)} className='text-decoration-none text-dark'>
                           <div className='status d-flex background-primary text-white justify-content-around py-2 btn'>
                             <span>10 Likes</span>
                             <span>-</span>

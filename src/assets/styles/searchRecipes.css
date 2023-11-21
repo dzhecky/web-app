@@ -1,0 +1,80 @@
+/* Hero Section Start */
+.hero-search h1 {
+  max-width: 400px;
+  margin-top: 100px;
+}
+
+.search-recipes input {
+  max-width: 350px;
+  height: 60px;
+  background-color: #efefef;
+}
+
+.search-recipes button {
+  height: 60px;
+  width: 150px;
+}
+/* Hero Section End */
+
+/* Menu Recipes Start */
+.status {
+  max-width: 270px;
+}
+
+.status span {
+  font-size: 10px;
+}
+
+.content-left-search {
+  display: grid;
+  justify-content: center;
+}
+/* Menu Recipes End */
+
+@media (min-width: 768px) {
+  .content-left-search {
+    display: block;
+  }
+
+  .content-right {
+    row-gap: 250px;
+  }
+
+  .content-right .line-decoration {
+    width: 35px;
+  }
+  /* Hero Section Start */
+  .hero-search h1 {
+    margin-top: 150px;
+    margin-left: 75px;
+  }
+
+  .search-recipes input {
+    margin-left: 75px;
+    max-width: 430px;
+  }
+
+  .tag {
+    max-width: 600px;
+    margin-left: 75px;
+  }
+  /* Hero Section End */
+
+  /* Menu Recipes Start */
+  .card-menu-search {
+    margin-left: 75px !important;
+    max-width: 750px;
+  }
+
+  .card-title {
+    max-width: 200px;
+  }
+
+  .card-text {
+    max-width: 200px;
+    font-size: 17px;
+  }
+  .status span {
+    font-size: 13px;
+  }
+}

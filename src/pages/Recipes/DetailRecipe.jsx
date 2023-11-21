@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
 import { useState, useEffect } from 'react';
@@ -18,6 +19,7 @@ export default function DetailRecipe() {
   const [user, setUser] = useState();
   const [data, setData] = useState([]);
   const [detailRecipe, setDetailRecipe] = useState({});
+  const [countRecipe, setCountRecipe] = useState({});
 
   const { id } = useParams();
 
@@ -68,6 +70,24 @@ export default function DetailRecipe() {
       .catch((err) => console.log(err));
     console.log('axios get recipe menu');
   }, [id]);
+
+  //get count recipes
+  useEffect(() => {
+    let countRecipeUrl = `/recipe/count/${detailRecipe.uuid_author}`;
+
+    axios
+      .get(base_url + countRecipeUrl, {
+        headers: {
+          token: `${localStorage.getItem('token')}`,
+        },
+      })
+      .then((res) => {
+        // console.log(res);
+        setCountRecipe(res.data.data);
+      })
+      .catch((err) => console.log(err));
+    // console.log('axios get count recipe menu');
+  }, [detailRecipe.uuid_author]);
 
   useEffect(() => {
     console.log(data);
@@ -134,10 +154,10 @@ export default function DetailRecipe() {
       <header className='container d-sm-flex align-items-center justify-content-between ff-poppins' id='hero'>
         <div className='d-flex align-items-center' id='users-avatar'>
           <span className='me-3 line-photo-user'></span>
-          <img src={user?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
+          <img src={detailRecipe?.photo_author} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
           <div className='d-flex flex-column ms-3 h-100 justify-content-center'>
-            <p className='mb-0 fw-medium'>{user?.name}</p>
-            <p className='text-recipe mb-0'>{data.length} Recipes</p>
+            <p className='mb-0 fw-medium'>{detailRecipe?.author}</p>
+            <p className='text-recipe mb-0'>{countRecipe?.count} Recipes</p>
           </div>
         </div>
         <div className='text-sm-end text-sm-start fw-medium pt-3 ps-4' id='users-status'>

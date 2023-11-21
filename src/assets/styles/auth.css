@@ -57,7 +57,7 @@ input[type='checkbox']:focus {
 }
 
 input[type='checkbox']:checked {
-  background-color: #efc81a;
+  background-color: #efc81a !important;
   border: none;
 }
 

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
 import { useState, useEffect } from 'react';
@@ -90,6 +91,7 @@ export default function EditRecipe() {
       })
       .then((res) => {
         console.log('success update data!');
+        alert('success update data!');
         console.log(res);
         navigate('/home');
       })
