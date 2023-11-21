@@ -1,0 +1,44 @@
+.add-recipe {
+  margin-top: 150px;
+}
+
+.add-photo {
+  height: 350px;
+  background-color: #f6f5f4;
+  position: relative;
+}
+
+.btn-add-photo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  margin-top: 65px;
+}
+
+.btn-add-photo input[type='file'] {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 35px;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+input,
+textarea,
+#category {
+  background-color: #f6f5f4 !important;
+  font-weight: 500 !important;
+}
+
+form select {
+  width: 150px !important;
+  margin-bottom: 50px;
+}
+
+form button {
+  width: 300px;
+  margin-bottom: 75px;
+}

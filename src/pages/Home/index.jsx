@@ -51,7 +51,7 @@ export default function Home() {
   }, [data]);
 
   const toDetailRecipe = (id) => {
-    navigate(`recipe/detail/${id}`);
+    navigate(`/recipe-detail/${id}`);
   };
 
   // Get date

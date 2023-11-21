@@ -61,21 +61,20 @@ export default function Navbar() {
           <a className='navbar-brand d-md-none' href='/index.html'>
             <span>Food Recipe</span>
           </a>
-          <button className='navbar-toggler collapsed bg-light' type='button' data-bs-toggle='collapse' data-bs-target='#navbarNav' aria-controls='navbarNav' aria-expanded='false' aria-label='Toggle navigation'>
+          <button className='navbar-toggler collapsed bg-light' onClick={changeNavbarBg} type='button' data-bs-toggle='collapse' data-bs-target='#navbarNav' aria-controls='navbarNav' aria-expanded='false' aria-label='Toggle navigation'>
             <span className='navbar-toggler-icon'></span>
           </button>
           <div className='collapse navbar-collapse' id='navbarNav'>
             <ul className='navbar-nav me-auto mb-2 mb-lg-0 ms-lg-5 ms-md-5'>
               <li className='nav-item me-5'>
-                <a className='nav-link' aria-current='page' href='/index.html'>
-                  {' '}
+                <Link to='/home' className='nav-link' aria-current='page'>
                   <span className='active'>Home</span>
-                </a>
+                </Link>
               </li>
               <li className='nav-item me-5'>
-                <a className='nav-link' href='./addRecipe.html'>
+                <Link to='/add-recipe' className='nav-link'>
                   <span>Add Recipe</span>
-                </a>
+                </Link>
               </li>
               <li className='nav-item me-5'>
                 <a className='nav-link' href='./searchRecipes.html'>
