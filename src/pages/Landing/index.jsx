@@ -1,3 +1,9 @@
+// eslint-disable-next-line no-unused-vars
+import React from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+
 import NavbarLanding from '../../components/NavbarLanding';
 import Footer from '../../components/Footer';
 import icSearch from '../../assets/icon/search.svg';
@@ -5,11 +11,30 @@ import heroImg from '../../assets/image/detail-menu.jpg';
 import ellipse from '../../assets/icon/Ellipse 114.svg';
 import suggestionImg from '../../assets/image/img-suggestion.jpg';
 import newRecipeImg from '../../assets/image/new-recipe.jpg';
-import popular from '../../assets/image/popular-1.jpg';
 import '../../assets/styles/utility.css';
 import '../../assets/styles/landing.css';
 
+const base_url = import.meta.env.VITE_BASE_URL;
+
 export default function Landing() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    let recipeUrl = `/recipe`;
+
+    axios
+      .get(base_url + recipeUrl, {
+        headers: {
+          token: `${localStorage.getItem('token')}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        setData(res.data.data);
+      })
+      .catch((err) => console.log(err));
+    console.log('axios get all recipe');
+  }, []);
   return (
     <>
       <NavbarLanding />
@@ -54,9 +79,9 @@ export default function Landing() {
             <div>
               <h1 className='mb-md-4 mb-xl-5'>Healthy Bone Broth Ramen (Quick & Easy)</h1>
               <p className='mb-md-4 mb-xl-5'>Quick + Easy Chicken Bone Broth Ramen- Healthy chicken ramen in a hurry? That’s right!</p>
-              <a href='/detailRecipe.html' className='btn background-primary text-white justify-content-start'>
+              <Link to='/login' className='btn background-primary text-white justify-content-start'>
                 Learn More
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -77,9 +102,9 @@ export default function Landing() {
             <div>
               <h1 className='mb-md-4 mb-xl-5'>Healthy Bone Broth Ramen (Quick & Easy)</h1>
               <p className='mb-md-4 mb-xl-5'>Quick + Easy Chicken Bone Broth Ramen- Healthy chicken ramen in a hurry? That’s right!</p>
-              <a href='/detailRecipe.html' className='btn background-primary text-white justify-content-start'>
+              <Link to='/login' className='btn background-primary text-white justify-content-start'>
                 Learn More
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -93,54 +118,18 @@ export default function Landing() {
         </div>
         <div className='container-fluid wrapper-popular'>
           <div className='row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4'>
-            <div className='col'>
-              <a href='/detailRecipe.html'>
-                <div className='card'>
-                  <p className='title text-dark fw-medium'>Chicken Kare</p>
-                  <img src={popular} className='card-img-top' alt='Chicken-Kare' />
+            {data?.map((items) => {
+              return (
+                <div className='col' key={items.id_recipe}>
+                  <Link to='/login'>
+                    <div className='card'>
+                      <p className='title text-dark fw-medium'>{items.title}</p>
+                      <img src={items.photo} className='card-img-top' alt='Chicken-Kare' />
+                    </div>
+                  </Link>
                 </div>
-              </a>
-            </div>
-            <div className='col'>
-              <a href='/detailRecipe.html'>
-                <div className='card align-items-center'>
-                  <p className='title text-dark fw-medium'>Bomb Chiken</p>
-                  <img src='/assets/image/popular-2.jpg' className='card-img-top' alt='Bomb-Chiken' />
-                </div>
-              </a>
-            </div>
-            <div className='col'>
-              <a href='/detailRecipe.html'>
-                <div className='card align-items-center'>
-                  <p className='title text-dark fw-medium'>Banana Smothie Pop</p>
-                  <img src='/assets/image/popular-3.jpg' className='card-img-top' alt='Banana-Smothie-Pop' />
-                </div>
-              </a>
-            </div>
-            <div className='col'>
-              <a href='/detailRecipe.html'>
-                <div className='card align-items-center'>
-                  <p className='title text-dark fw-medium'>Coffee Lava Cake</p>
-                  <img src='/assets/image/popular-4.jpg' className='card-img-top' alt='Coffee-Lava-Cake' />
-                </div>
-              </a>
-            </div>
-            <div className='col'>
-              <a href='/detailRecipe.html'>
-                <div className='card align-items-center'>
-                  <p className='title text-dark fw-medium'>Sugar Salmon</p>
-                  <img src='/assets/image/popular-5.jpg' className='card-img-top' alt='Sugar-Salmon' />
-                </div>
-              </a>
-            </div>
-            <div className='col'>
-              <a href='/detailRecipe.html'>
-                <div className='card align-items-center'>
-                  <p className='title text-dark fw-medium'>Indian Salad</p>
-                  <img src='/assets/image/popular-6.jpg' className='card-img-top' alt='Indian-Salad' />
-                </div>
-              </a>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
