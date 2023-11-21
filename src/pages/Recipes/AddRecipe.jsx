@@ -19,7 +19,7 @@ export default function AddRecipe() {
     photo_url: '',
     title: '',
     ingredients: '',
-    category_id: '',
+    category_id: '1',
   });
 
   useEffect(() => {

@@ -9,6 +9,7 @@ import '../../assets/styles/home.css';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const base_url = import.meta.env.VITE_BASE_URL;
 
@@ -39,16 +40,28 @@ export default function Home() {
         },
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setData(res.data.data);
       })
       .catch((err) => console.log(err));
-    console.log('axios get recipe menu');
-  }, []);
-
-  useEffect(() => {
-    console.log(data);
+    // console.log('axios get recipe menu');
   }, [data]);
+
+  const deleteRecipe = (id) => {
+    axios
+      .delete(base_url + `/recipe/${id}`, {
+        headers: {
+          token: `${localStorage.getItem('token')}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        <Link to='/home' />;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const toDetailRecipe = (id) => {
     navigate(`/recipe-detail/${id}`);
@@ -166,8 +179,8 @@ export default function Home() {
             <div className='card mb-3 mt-5 card-menu border-0'>
               {data?.map((items) => {
                 return (
-                  <div className='row g-0 mb-5' key={items.id_recipe} onClick={() => toDetailRecipe(items.id_recipe)}>
-                    <div className='col-md-6'>
+                  <div className='row g-0 mb-5' key={items.id_recipe}>
+                    <div className='col-md-6' onClick={() => toDetailRecipe(items.id_recipe)}>
                       <img src={items.photo} className='img-fluid rounded-start w-100 img-my-recipes object-fit-cover' alt='...' />
                     </div>
                     <div className='container col-md-6 p-0 recipe-info'>
@@ -190,7 +203,31 @@ export default function Home() {
                           <a className='btn btn-primary' href='editRecipe.html'>
                             Edit Recipe
                           </a>
-                          <button className='btn btn-danger'>Delete Recipe</button>
+                          <button className='btn btn-danger' type='button' data-bs-toggle='modal' data-bs-target='#deleteRecipeModal'>
+                            Delete Recipe
+                          </button>
+                          {/* <!-- Modal --> */}
+                          <div className='modal fade' id='deleteRecipeModal' tabIndex='-1' aria-labelledby='exampleModalLabel' aria-hidden='false'>
+                            <div className='modal-dialog modal-dialog-centered'>
+                              <div className='modal-content'>
+                                <div className='modal-header'>
+                                  <h1 className='modal-title fs-5' id='exampleModalLabel'>
+                                    Delete Recipe
+                                  </h1>
+                                  <button type='button' className='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+                                </div>
+                                <div className='modal-body'>Are you sure delete this recipe?</div>
+                                <div className='modal-footer'>
+                                  <button type='button' className='btn btn-secondary' data-bs-dismiss='modal'>
+                                    No
+                                  </button>
+                                  <button type='button' className='btn btn-danger' data-bs-dismiss='modal' onClick={() => deleteRecipe(items.id_recipe)}>
+                                    Yes
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
