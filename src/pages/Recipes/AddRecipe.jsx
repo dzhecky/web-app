@@ -3,6 +3,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -43,8 +44,7 @@ export default function AddRecipe() {
     console.log('Category ', category);
   }, [category]);
 
-  const postData = (event) => {
-    event.preventDefault();
+  const postData = () => {
     let bodyData = new FormData();
     bodyData.append('photo', photo);
     bodyData.append('title', inputData.title);
@@ -61,12 +61,41 @@ export default function AddRecipe() {
       .then((res) => {
         console.log('success input data!');
         console.log(res);
+        Swal.fire({
+          title: 'Success!',
+          text: res.data.message,
+          icon: 'success',
+        });
         navigate('/home');
       })
       .catch((err) => {
         console.log('failed input data!');
         console.log(err);
+        Swal.fire({
+          title: 'Failed!',
+          text: `error :  ${err.response.data.messsage || err.response.data.message} `,
+          icon: 'error',
+        });
       });
+  };
+
+  const handlePostData = (event) => {
+    event.preventDefault();
+    Swal.fire({
+      icon: 'warning',
+      title: 'Confirmation',
+      text: 'Are you sure want to add this recipe?',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        postData();
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+      }
+    });
   };
 
   const onChange = (e) => {
@@ -85,7 +114,7 @@ export default function AddRecipe() {
       <Navbar />
       <div className='container-fluid ff-poppins px-0'>
         <section className='container add-recipe'>
-          <form onSubmit={postData} id='form-add-recipe'>
+          <form onSubmit={handlePostData} id='form-add-recipe'>
             <div className='d-flex add-photo form-control justify-content-center align-items-center mb-4'>
               {photo && <img src={inputData.photo_url} className='position-absolute w-100 h-100 object-fit-cover' />}
               <button className='btn btn-add-photo fw-medium'>

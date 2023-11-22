@@ -4,6 +4,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -74,8 +75,7 @@ export default function EditRecipe() {
     });
   }, [data]);
 
-  const putData = (event) => {
-    event.preventDefault();
+  const putData = () => {
     let bodyData = new FormData();
     bodyData.append('photo', photo);
     bodyData.append('title', form.title);
@@ -91,14 +91,42 @@ export default function EditRecipe() {
       })
       .then((res) => {
         console.log('success update data!');
-        alert('success update data!');
         console.log(res);
+        Swal.fire({
+          title: 'Success!',
+          text: res.data.message,
+          icon: 'success',
+        });
         navigate('/home');
       })
       .catch((err) => {
         console.log('failed update data!');
         console.log(err);
+        Swal.fire({
+          title: 'Failed!',
+          text: `error :  ${err.response.data.messsage}`,
+          icon: 'error',
+        });
       });
+  };
+
+  const handleUpdate = (event) => {
+    event.preventDefault();
+    Swal.fire({
+      icon: 'warning',
+      title: 'Confirmation',
+      text: 'Are you sure want to update this recipe?',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        putData();
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+      }
+    });
   };
 
   const onChangePhoto = (e) => {
@@ -111,7 +139,7 @@ export default function EditRecipe() {
     <div>
       <Navbar />
       <section className='container edit-recipe'>
-        <form onSubmit={putData}>
+        <form onSubmit={handleUpdate}>
           <div className='d-flex edit-photo align-items-center justify-content-center mb-4 ps-0'>
             {form.photo && <img src={form.photo} alt='image-recipe' className='rounded' />}
             <button className='btn btn-change-photo fw-medium'>

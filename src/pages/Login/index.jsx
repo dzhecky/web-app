@@ -2,15 +2,16 @@
 import React from 'react';
 import axios from 'axios';
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 import '../../assets/styles/utility.css';
 import '../../assets/styles/auth.css';
 import logoApp from '../../assets/icon/barbecue 1.svg';
-import { Link, useNavigate } from 'react-router-dom';
+
 const base_url = import.meta.env.VITE_BASE_URL;
 
 export default function Login() {
-  // const [data, setData] = useState();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     email: '',
@@ -30,9 +31,17 @@ export default function Login() {
     e.preventDefault();
 
     if (form.terms !== true) {
-      alert('You must agree terms & conditions');
+      Swal.fire({
+        title: 'Failed!',
+        text: `You must agree terms & conditions`,
+        icon: 'error',
+      });
     } else if (form.email === '' || form.password === '') {
-      alert('Email / Password must be filled !');
+      Swal.fire({
+        title: 'Failed!',
+        text: `Email and Password is required!`,
+        icon: 'error',
+      });
     } else {
       axios
         .post(
@@ -50,12 +59,20 @@ export default function Login() {
           localStorage.setItem('photo', res.data.photo);
           localStorage.setItem('token', res.data.token.accessToken);
           localStorage.setItem('refreshToken', res.data.token.refreshToken);
-          alert(`Login Success!`);
+          Swal.fire({
+            title: 'Success!',
+            text: res.data.message,
+            icon: 'success',
+          });
           return navigate('/home');
         })
         .catch((err) => {
           console.log(err);
-          alert(`message: ${err.response.data.message}`);
+          Swal.fire({
+            title: 'Failed!',
+            text: `error :  ${err.response.data.message}`,
+            icon: 'error',
+          });
         });
     }
   };

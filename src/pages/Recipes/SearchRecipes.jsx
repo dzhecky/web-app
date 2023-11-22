@@ -3,6 +3,8 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import ReactPaginate from 'react-paginate';
+import Swal from 'sweetalert2';
 
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -13,10 +15,19 @@ const base_url = import.meta.env.VITE_BASE_URL;
 
 export default function SearchRecipes() {
   const [data, setData] = useState([]);
+  const [page, setPage] = useState(0);
+  // eslint-disable-next-line no-unused-vars
+  const [limit, setLimit] = useState(5);
+  const [pages, setPages] = useState(0);
+  const [rows, setRows] = useState(0);
+  const [keyword, setKeyword] = useState('');
+  const [query, setQuery] = useState('');
+  const [message, setMessage] = useState('');
+
   const navigate = useNavigate();
 
-  useEffect(() => {
-    let recipeUrl = `/recipe`;
+  const getAllRecipe = () => {
+    let recipeUrl = `/recipe?search=${keyword}&page=${page}&limit=${limit}`;
 
     axios
       .get(base_url + recipeUrl, {
@@ -26,11 +37,44 @@ export default function SearchRecipes() {
       })
       .then((res) => {
         console.log(res);
+        if (res.data.data.length === 0) {
+          Swal.fire({
+            title: 'Failed!',
+            text: `error :  ${res.data.message} `,
+            icon: 'error',
+          });
+        }
         setData(res.data.data);
+        setPage(res.data.pagination.currentPage);
+        setPages(res.data.pagination.totalPage);
+        setRows(res.data.pagination.totalRows);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+      });
     console.log('axios get all recipe');
-  }, []);
+  };
+
+  useEffect(() => {
+    getAllRecipe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, keyword]);
+
+  const changePage = (data) => {
+    let currentPage = data.selected + 1;
+    setPage(currentPage);
+    if (currentPage === 10) {
+      setMessage(`If you don't find the recipe you are looking for, please enter specific keywords`);
+    } else {
+      setMessage('');
+    }
+  };
+
+  const searchData = (e) => {
+    e.preventDefault();
+    setPage(0);
+    setKeyword(query);
+  };
 
   const toDetailRecipe = (id) => {
     navigate(`/recipe-detail/${id}`);
@@ -43,10 +87,14 @@ export default function SearchRecipes() {
         {/* <!-- Hero Section Start --> */}
         <section className='hero-search px-3 px-md-0' id='hero'>
           <h1 className='color-blue'>Discover Recipe & Delicious Food</h1>
-          <div className='d-flex mt-3 search-recipes'>
-            <input type='search' className='form-control' placeholder='Search Recipes' />
-            <button className='btn background-primary color-white ms-3'>Search</button>
-          </div>
+          <form onSubmit={searchData}>
+            <div className='d-flex mt-3 search-recipes'>
+              <input type='search' className='form-control' placeholder='Search Recipes' value={query} onChange={(e) => setQuery(e.target.value)} />
+              <button type='submit' className='btn background-primary color-white ms-3'>
+                Search
+              </button>
+            </div>
+          </form>
           <div className='d-flex flex-wrap mt-3 tag gap-3'>
             <button className='btn background-primary color-white px-3'>New</button>
             <button className='btn background-primary color-white px-3'>Popular</button>
@@ -64,7 +112,7 @@ export default function SearchRecipes() {
                   <a className='text-decoration-none' onClick={() => toDetailRecipe(items.id_recipe)}>
                     <div className='row g-0'>
                       <div className='col-md-6'>
-                        <img src={items.photo} className='img-fluid rounded-start w-100' alt='...' />
+                        <img src={items.photo} className='img-fluid rounded w-100' alt='...' />
                       </div>
                       <div className='container col-md-6 p-0'>
                         <div className='ms-md-4 card-body ps-1 pt-md-0'>
@@ -94,9 +142,33 @@ export default function SearchRecipes() {
             <div className='h-50 background-primary align-self-end line-decoration'></div>
             <div className='h-50 background-primary align-self-end line-decoration'></div>
           </div>
-          <div className='container d-flex justify-content-center gap-4 mt-5 mb-5' id='paging'>
-            <span className='color-grey align-self-center'>Show 1-5 from 20</span>
-            <button className='btn background-primary text-white align-self-center'>Next</button>
+          <div className='container d-flex flex-column justify-content-center gap-2 mt-5 mb-5' id='paging'>
+            <span className='color-grey align-self-center'>Total Recipes {rows} Recipes</span>
+            <span className='color-grey align-self-center'>
+              Page {page} of {pages}
+            </span>
+            <span className='color-grey align-self-center'>{message}</span>
+            <div className='container d-flex justify-content-center gap-4 mb-5'>
+              <ReactPaginate
+                previousLabel={'Prev'}
+                nextLabel={'Next'}
+                breakLabel={'...'}
+                pageCount={Math.min(10, pages)}
+                onPageChange={changePage}
+                marginPagesDisplayed={3}
+                pageRangeDisplayed={3}
+                containerClassName={'pagination'}
+                pageClassName={'page-item'}
+                pageLinkClassName={'page-link'}
+                previousClassName={'page-item'}
+                previousLinkClassName={'page-link background-primary text-white'}
+                nextClassName={'page-item'}
+                nextLinkClassName={'page-link background-primary text-white'}
+                breakClassName={'page-item'}
+                breakLinkClassName={'page-link'}
+                activeClassName={'active'}
+              />
+            </div>
           </div>
         </section>
       </div>

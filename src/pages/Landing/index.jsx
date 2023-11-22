@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
 import { useState, useEffect } from 'react';
@@ -7,10 +8,8 @@ import { Link } from 'react-router-dom';
 import NavbarLanding from '../../components/NavbarLanding';
 import Footer from '../../components/Footer';
 import icSearch from '../../assets/icon/search.svg';
-import heroImg from '../../assets/image/detail-menu.jpg';
+import heroImg from '../../assets/image/hero.jpg';
 import ellipse from '../../assets/icon/Ellipse 114.svg';
-import suggestionImg from '../../assets/image/img-suggestion.jpg';
-import newRecipeImg from '../../assets/image/new-recipe.jpg';
 import '../../assets/styles/utility.css';
 import '../../assets/styles/landing.css';
 
@@ -18,9 +17,12 @@ const base_url = import.meta.env.VITE_BASE_URL;
 
 export default function Landing() {
   const [data, setData] = useState([]);
+  const [limit, setLimit] = useState(9);
+  const [latestRecipe, setLatestRecipe] = useState([]);
+  const [suggestionRecipe, setSuggestionRecipe] = useState([]);
 
   useEffect(() => {
-    let recipeUrl = `/recipe`;
+    let recipeUrl = `/recipe?limit=${limit}`;
 
     axios
       .get(base_url + recipeUrl, {
@@ -34,7 +36,42 @@ export default function Landing() {
       })
       .catch((err) => console.log(err));
     console.log('axios get all recipe');
+  }, [limit]);
+
+  useEffect(() => {
+    let latestRecipeUrl = `/recipe/latest`;
+
+    axios
+      .get(base_url + latestRecipeUrl, {
+        headers: {
+          token: `${localStorage.getItem('token')}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        setLatestRecipe(res.data.data);
+      })
+      .catch((err) => console.log(err));
+    console.log('axios get latest recipe');
   }, []);
+
+  useEffect(() => {
+    let suggestionRecipeUrl = `/recipe/suggestion`;
+
+    axios
+      .get(base_url + suggestionRecipeUrl, {
+        headers: {
+          token: `${localStorage.getItem('token')}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        setSuggestionRecipe(res.data.data);
+      })
+      .catch((err) => console.log(err));
+    console.log('axios get suggestion recipe');
+  }, []);
+
   return (
     <>
       <NavbarLanding />
@@ -62,29 +99,37 @@ export default function Landing() {
         <div className='title-section py-3 px-3 mb-5'>
           <h2 className='fw-semibold'>Popular For You!</h2>
         </div>
-        <div className='row mx-0'>
-          <div className='left col-12 col-md-6 d-flex justify-content-center'>
-            <div className='ellipse d-none d-md-flex'>
-              <img src={ellipse} alt='Ellipse' className='img-elipse' />
-              <img src={ellipse} alt='Ellipse' className='img-elipse' />
-              <img src={ellipse} alt='Ellipse' className='img-elipse' />
-              <img src={ellipse} alt='Ellipse' className='img-elipse' />
-              <img src={ellipse} alt='Ellipse' className='img-elipse' />
-              <img src={ellipse} alt='Ellipse' className='img-elipse' />
+        {suggestionRecipe?.map((items) => {
+          return (
+            <div className='row mx-0' key={items.id_recipe}>
+              <div className='left col-12 col-md-6 d-flex justify-content-center'>
+                <div className='ellipse d-none d-md-flex'>
+                  <img src={ellipse} alt='Ellipse' className='img-elipse' />
+                  <img src={ellipse} alt='Ellipse' className='img-elipse' />
+                  <img src={ellipse} alt='Ellipse' className='img-elipse' />
+                  <img src={ellipse} alt='Ellipse' className='img-elipse' />
+                  <img src={ellipse} alt='Ellipse' className='img-elipse' />
+                  <img src={ellipse} alt='Ellipse' className='img-elipse' />
+                </div>
+                <img src={items.photo} alt='img-suggestion' className='mb-3 img-suggestion' />
+                <div className='rectangle'></div>
+              </div>
+              <div className='right col-12 col-md-6 d-flex flex-column justify-content-center align-items-center'>
+                <div>
+                  <h1 className='mb-md-4 mb-xl-5'>{items.title}</h1>
+                  <p className='mb-md-4 mb-xl-5'>
+                    <span className='fw-medium'>Ingredients:</span>
+                    <br />
+                    {items.ingredients}
+                  </p>
+                  <Link to='/login' className='btn background-primary text-white justify-content-start'>
+                    Learn More
+                  </Link>
+                </div>
+              </div>
             </div>
-            <img src={suggestionImg} alt='img-suggestion' className='mb-3 img-suggestion' />
-            <div className='rectangle'></div>
-          </div>
-          <div className='right col-12 col-md-6 d-flex flex-column justify-content-center align-items-center'>
-            <div>
-              <h1 className='mb-md-4 mb-xl-5'>Healthy Bone Broth Ramen (Quick & Easy)</h1>
-              <p className='mb-md-4 mb-xl-5'>Quick + Easy Chicken Bone Broth Ramen- Healthy chicken ramen in a hurry? That’s right!</p>
-              <Link to='/login' className='btn background-primary text-white justify-content-start'>
-                Learn More
-              </Link>
-            </div>
-          </div>
-        </div>
+          );
+        })}
       </section>
       {/* <!-- Suggestion Section End --> */}
 
@@ -93,28 +138,36 @@ export default function Landing() {
         <div className='title-section py-3 px-3 mb-5'>
           <h2 className='fw-semibold'>New Recipe</h2>
         </div>
-        <div className='row mx-0'>
-          <div className='left col-12 col-md-6 d-flex justify-content-center'>
-            <div className='new-decoration'></div>
-            <img src={newRecipeImg} alt='img-new-recipe' className='mb-3 img-new' />
-          </div>
-          <div className='right col-12 col-md-6 d-flex flex-column justify-content-center align-items-center'>
-            <div>
-              <h1 className='mb-md-4 mb-xl-5'>Healthy Bone Broth Ramen (Quick & Easy)</h1>
-              <p className='mb-md-4 mb-xl-5'>Quick + Easy Chicken Bone Broth Ramen- Healthy chicken ramen in a hurry? That’s right!</p>
-              <Link to='/login' className='btn background-primary text-white justify-content-start'>
-                Learn More
-              </Link>
+        {latestRecipe?.map((items) => {
+          return (
+            <div className='row mx-0' key={items.id_recipe}>
+              <div className='left col-12 col-md-6 d-flex justify-content-center'>
+                <div className='new-decoration'></div>
+                <img src={items.photo} alt='img-new-recipe' className='mb-3 img-new' />
+              </div>
+              <div className='right col-12 col-md-6 d-flex flex-column justify-content-center align-items-center'>
+                <div>
+                  <h1 className='mb-md-4 mb-xl-5'>{items.title}</h1>
+                  <p className='mb-md-4 mb-xl-5'>
+                    <span className='fw-medium'>Ingredients:</span>
+                    <br />
+                    {items.ingredients}
+                  </p>
+                  <Link to='/login' className='btn background-primary text-white justify-content-start'>
+                    Learn More
+                  </Link>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          );
+        })}
       </section>
       {/* <!-- New Section End --> */}
 
       {/* <!-- Popular Section Start --> */}
       <section className='popular ff-poppins mb-5' id='popular'>
         <div className='title-section py-3 px-3 mb-5'>
-          <h2 className='fw-semibold'>Popular Recipe</h2>
+          <h2 className='fw-semibold'>Latest Recipe</h2>
         </div>
         <div className='container-fluid wrapper-popular'>
           <div className='row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4'>
@@ -123,8 +176,8 @@ export default function Landing() {
                 <div className='col' key={items.id_recipe}>
                   <Link to='/login'>
                     <div className='card'>
-                      <p className='title text-dark fw-medium'>{items.title}</p>
-                      <img src={items.photo} className='card-img-top' alt='Chicken-Kare' />
+                      <p className='title text-dark fw-bold'>{items.title}</p>
+                      <img src={items.photo} className='card-img-top' alt='image-recipe' />
                     </div>
                   </Link>
                 </div>
