@@ -164,7 +164,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-## Related Sroject
+## Related Project
 
 🚀 [`FoodRecipes Backend`](https://github.com/rikimuhammadasli021299/food-recipe-api)
 
