@@ -112,13 +112,15 @@ export default function SearchRecipes() {
                   <a className='text-decoration-none' onClick={() => toDetailRecipe(items.id_recipe)}>
                     <div className='row g-0'>
                       <div className='col-md-6'>
-                        <img src={items.photo} className='img-fluid rounded w-100' alt='...' />
+                        <img src={items.photo} className='img-fluid rounded w-100 h-100 object-fit-cover' alt='img-recipe' />
                       </div>
                       <div className='container col-md-6 p-0'>
-                        <div className='ms-md-4 card-body ps-1 pt-md-0'>
+                        <div className='ms-md-4 card-body ps-1 pt-md-0 d-flex flex-column justify-content-between h-100'>
                           <h3 className='card-title mb-4 color-grey fw-medium'>{items.title}</h3>
-                          <p className='card-text fw-medium mb-0 color-grey'>Ingredients:</p>
-                          <p className='card-text fw-medium color-grey'>{items.ingredients.join(', ')}</p>
+                          <p className='card-text fw-medium mb-3 color-grey'>
+                            <span className='fw-semibold'>Ingredients: </span> <br />
+                            {items.ingredients.join(', ')}
+                          </p>
                           <div className='status d-flex background-primary text-white justify-content-around py-2 btn'>
                             <span>10 Likes</span>
                             <span>-</span>

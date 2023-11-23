@@ -251,8 +251,8 @@ export default function Home() {
                             <span>3 bookmark</span>
                           </div>
                         </a>
-                        <div className='d-flex mt-4 justify-content-between'>
-                          <a className='btn btn-primary' onClick={() => toEditRecipe(items.id_recipe)}>
+                        <div className='d-flex mt-4'>
+                          <a className='btn btn-primary me-4' onClick={() => toEditRecipe(items.id_recipe)}>
                             Edit Recipe
                           </a>
                           <button className='btn btn-danger' type='button' onClick={() => handleDeleteRecipe(items.id_recipe)}>

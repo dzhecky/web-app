@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import '../assets/styles/utility.css';
 import '../assets/styles/navbar.css';
@@ -67,19 +67,19 @@ export default function Navbar() {
           <div className='collapse navbar-collapse' id='navbarNav'>
             <ul className='navbar-nav me-auto mb-2 mb-lg-0 ms-lg-5 ms-md-5'>
               <li className='nav-item me-5'>
-                <Link to='/home' className='nav-link' aria-current='page'>
-                  <span className='active'>Home</span>
-                </Link>
+                <NavLink to='/home' className='nav-link' aria-current='page'>
+                  Home
+                </NavLink>
               </li>
               <li className='nav-item me-5'>
-                <Link to='/add-recipe' className='nav-link'>
-                  <span>Add Recipe</span>
-                </Link>
+                <NavLink to='/add-recipe' className='nav-link'>
+                  Add Recipe
+                </NavLink>
               </li>
               <li className='nav-item me-5'>
-                <Link to='/search-recipes' className='nav-link' href='./searchRecipes.html'>
-                  <span>Search Recipes</span>
-                </Link>
+                <NavLink to='/search-recipes' className='nav-link' href='./searchRecipes.html'>
+                  Search Recipes
+                </NavLink>
               </li>
             </ul>
             <span className='me-3 line-photo'></span>
