@@ -90,7 +90,7 @@ Things that you need to run this application
    ```sh
    cd food-recipes-fe
    ```
-3. Install NPM packages
+3. Install PNPM packages
    ```sh
    pnpm install
    ```
