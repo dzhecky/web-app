@@ -1,4 +1,4 @@
-import { Route, Routes, BrowserRouter } from 'react-router-dom';
+import { Route, Routes, HashRouter } from 'react-router-dom';
 
 // pages
 import Landing from './pages/Landing';
@@ -14,7 +14,7 @@ import SearchRecipes from './pages/Recipes/SearchRecipes';
 function App() {
   return (
     <>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route path='/' element={<Landing />} />
           {/* <Route path='/register' element={<Register />} /> */}
@@ -26,7 +26,7 @@ function App() {
           <Route path='/edit-recipe/:id' element={<EditRecipe />} />
           <Route path='/search-recipes' element={<SearchRecipes />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </>
   );
 }
