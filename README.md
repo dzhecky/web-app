@@ -14,12 +14,12 @@
     <a href="https://github.com/rikimuhammadasli021299/food-recipes-app-fe"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="#">View Demo</a>
     ·
     <a href="https://github.com/rikimuhammadasli021299/food-recipes-app-fe/issues">Report Bug</a>
     ·
     <a href="https://github.com/rikimuhammadasli021299/food-recipes-app-fe/issues">Request Feature</a>
     <br />
+    
   </p>
 </div>
 
@@ -103,6 +103,15 @@ Things that you need to run this application
    pnpm run dev
    ```
    <p align="right">(<a href="#top">back to top</a>)</p>
+
+## Demo Apps
+
+[View Demo](https://food-recipes-app-fe.vercel.app/)
+
+Account demo:
+
+- Email: user01@gmail.com
+- Password: user01
 
 ## Screenshot
 
