@@ -9,9 +9,9 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import '../../assets/styles/utility.css';
 import '../../assets/styles/detailRecipe.css';
-import iconBookmark from '../../assets/icon/Bookmark.svg';
-import iconLike from '../../assets/icon/like.svg';
-import imgUser from '../../assets/image/user.png';
+import iconBookmark from '../../../public/bookmark.svg';
+import iconLike from '../../../public/like.svg';
+import imgUser from '../../../public/user.png';
 
 const base_url = import.meta.env.VITE_BASE_URL;
 
