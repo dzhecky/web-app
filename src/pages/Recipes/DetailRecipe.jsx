@@ -4,6 +4,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -19,7 +20,7 @@ export default function DetailRecipe() {
   const [user, setUser] = useState();
   const [data, setData] = useState([]);
   const [detailRecipe, setDetailRecipe] = useState({});
-  const [countRecipe, setCountRecipe] = useState({});
+  const [countRecipe, setCountRecipe] = useState();
 
   const { id } = useParams();
 
@@ -92,7 +93,39 @@ export default function DetailRecipe() {
   useEffect(() => {
     console.log(data);
     console.log('detail ', detailRecipe);
-  }, [data, detailRecipe]);
+  }, [data, detailRecipe, countRecipe]);
+
+  const handleEvent = (eventStatus) => {
+    axios
+      .post(
+        base_url + `/event`,
+        {
+          recipes_id: id,
+          status: eventStatus,
+        },
+        {
+          headers: {
+            token: `${localStorage.getItem('token')}`,
+            'content-type': 'application/x-www-form-urlencoded',
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res);
+        Swal.fire({
+          title: 'Success!',
+          text: `Recipe successfully ${res.data.data.status}ed`,
+          icon: 'success',
+        });
+      })
+      .catch((err) => {
+        Swal.fire({
+          title: 'Failed!',
+          text: `error :  ${err.response.data.message}`,
+          icon: 'error',
+        });
+      });
+  };
 
   // Get date
   let date;
@@ -179,10 +212,10 @@ export default function DetailRecipe() {
       </section>
       {/* <!-- Comments Start --> */}
       <section className='container mt-5 ps-2 ff-poppins' id='section-comments'>
-        <button className='btn-bookmark background-primary me-3'>
+        <button className='btn-bookmark background-primary me-3' onClick={() => handleEvent('bookmark')}>
           <img src={iconBookmark} alt='bookmark' />
         </button>
-        <button className='btn-like'>
+        <button className='btn-like' onClick={() => handleEvent('like')}>
           <img src={iconLike} alt='like' />
         </button>
         <div className='box-comments mt-3'>

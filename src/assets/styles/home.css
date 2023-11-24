@@ -12,6 +12,18 @@ header {
   top: 3px;
 }
 
+.color-gray {
+  color: #b6b6b6 !important;
+}
+
+.menu-recipes {
+  display: none;
+}
+
+.active-content {
+  display: block !important;
+}
+
 .content-left {
   display: flex;
   justify-content: center;

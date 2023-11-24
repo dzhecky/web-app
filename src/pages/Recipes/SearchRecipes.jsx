@@ -104,7 +104,7 @@ export default function SearchRecipes() {
         </section>
         {/* <!-- Hero Section End--> */}
 
-        <section className='menu-recipes row g-0' id='recipes'>
+        <section className='menu-search-recipes row g-0' id='recipes'>
           <div className='content-left-search col-md-11' id='result-recipes'>
             {data?.map((items) => {
               return (
