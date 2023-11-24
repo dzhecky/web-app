@@ -16,7 +16,7 @@ import '../../assets/styles/home.css';
 const base_url = import.meta.env.VITE_BASE_URL;
 
 export default function Home() {
-  const [user, setUser] = useState();
+  const [userLogin, setUserLogin] = useState();
   const [data, setData] = useState([]);
   const [bookmark, setBookmark] = useState([]);
   const [like, setLike] = useState([]);
@@ -35,16 +35,27 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    let item = {
-      name: localStorage.getItem('name'),
-      uuid: localStorage.getItem('uuid'),
-      photo: localStorage.getItem('photo'),
-      token: localStorage.getItem('token'),
-      refreshToken: localStorage.getItem('refreshToken'),
-    };
-    localStorage.getItem('name') && setUser(item);
     showDate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    let detailUserUrl = `/users/${localStorage.getItem('uuid')}`;
+
+    axios
+      .get(base_url + detailUserUrl, {
+        headers: {
+          token: `${localStorage.getItem('token')}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        setUserLogin(res.data.result);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    console.log('axios get detail user');
   }, []);
 
   const getMyRecipes = () => {
@@ -255,6 +266,10 @@ export default function Home() {
     navigate(`/edit-recipe/${id}`);
   };
 
+  const toDetailPorifile = (id) => {
+    navigate(`/profile/${id}`);
+  };
+
   const handleTabActive = (index) => {
     setToggleTabs(index);
     getMyRecipes();
@@ -322,16 +337,16 @@ export default function Home() {
       <div className='container-fluid ff-poppins px-0'>
         {/* <!-- Hero Section Start --> */}
         <header className='container d-sm-flex align-items-center justify-content-between' id='hero'>
-          <a href='editProfile.html' className='text-decoration-none text-dark'>
-            <div className='d-flex align-items-center' id='users-avatar'>
-              <span className='me-3 line-photo-user'></span>
-              <img src={user?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
-              <div className='d-flex flex-column ms-3 h-100 justify-content-center'>
-                <p className='mb-0 fw-medium'>{user?.name}</p>
-                <p className='text-recipe mb-0'>{rows} Recipes</p>
-              </div>
+          {/* <a className='text-decoration-none text-dark'> */}
+          <div className='d-flex align-items-center' id='users-avatar' onClick={() => toDetailPorifile(localStorage.getItem('uuid'))}>
+            <span className='me-3 line-photo-user'></span>
+            <img src={userLogin?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
+            <div className='d-flex flex-column ms-3 h-100 justify-content-center'>
+              <p className='mb-0 fw-medium'>{userLogin?.name}</p>
+              <p className='text-recipe mb-0'>{rows} Recipes</p>
             </div>
-          </a>
+          </div>
+          {/* </a> */}
           <div className='text-sm-end text-sm-start fw-medium pt-3 ps-4'>
             <p className='my-0 fw-medium' id='date'></p>
           </div>

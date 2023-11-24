@@ -55,6 +55,7 @@ export default function Login() {
         .then((res) => {
           console.log(res);
           localStorage.setItem('name', res.data.name);
+          localStorage.setItem('email', res.data.email);
           localStorage.setItem('uuid', res.data.uuid);
           localStorage.setItem('photo', res.data.photo);
           localStorage.setItem('token', res.data.token.accessToken);

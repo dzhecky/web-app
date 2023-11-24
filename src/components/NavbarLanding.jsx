@@ -5,10 +5,6 @@ import '../assets/styles/utility.css';
 import '../assets/styles/navbar.css';
 
 export default function NavbarLanding() {
-  window.onscroll = () => {
-    scrollFunction();
-  };
-
   // Scroll Handler
   function scrollFunction() {
     let navbarTogglerStatus = document.querySelector('.navbar-toggler').classList.contains('collapsed');
@@ -41,7 +37,21 @@ export default function NavbarLanding() {
           <a className='navbar-brand d-md-none' href='/index.html'>
             <span>Food Recipe</span>
           </a>
-          <button className='navbar-toggler collapsed bg-light' onClick={changeNavbarBg} type='button' data-bs-toggle='collapse' data-bs-target='#navbarNav' aria-controls='navbarNav' aria-expanded='false' aria-label='Toggle navigation'>
+          <button
+            className='navbar-toggler collapsed bg-light'
+            onClick={changeNavbarBg}
+            onScroll={
+              (window.onscroll = () => {
+                scrollFunction();
+              })
+            }
+            type='button'
+            data-bs-toggle='collapse'
+            data-bs-target='#navbarNav'
+            aria-controls='navbarNav'
+            aria-expanded='false'
+            aria-label='Toggle navigation'
+          >
             <span className='navbar-toggler-icon'></span>
           </button>
           <div className='collapse navbar-collapse' id='navbarNav'>

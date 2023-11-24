@@ -2,31 +2,39 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import axios from 'axios';
+
 import '../assets/styles/utility.css';
 import '../assets/styles/navbar.css';
 
+const base_url = import.meta.env.VITE_BASE_URL;
+
 export default function Navbar() {
-  const [user, setUser] = useState();
+  const [userLogin, setUserLogin] = useState();
 
   useEffect(() => {
-    let item = {
-      name: localStorage.getItem('name'),
-      uuid: localStorage.getItem('uuid'),
-      photo: localStorage.getItem('photo'),
-      token: localStorage.getItem('token'),
-      refreshToken: localStorage.getItem('refreshToken'),
-    };
-    localStorage.getItem('name') && setUser(item);
+    let detailUserUrl = `/users/${localStorage.getItem('uuid')}`;
+
+    axios
+      .get(base_url + detailUserUrl, {
+        headers: {
+          token: `${localStorage.getItem('token')}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        setUserLogin(res.data.result);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    console.log('axios get detail user');
   }, []);
 
   const handleLogout = () => {
-    setUser(null);
+    setUserLogin(null);
     localStorage.clear();
     return;
-  };
-
-  window.onscroll = () => {
-    scrollFunction();
   };
 
   // Scroll Handler
@@ -61,7 +69,21 @@ export default function Navbar() {
           <a className='navbar-brand d-md-none' href='/index.html'>
             <span>Food Recipe</span>
           </a>
-          <button className='navbar-toggler collapsed bg-light' onClick={changeNavbarBg} type='button' data-bs-toggle='collapse' data-bs-target='#navbarNav' aria-controls='navbarNav' aria-expanded='false' aria-label='Toggle navigation'>
+          <button
+            className='navbar-toggler collapsed bg-light'
+            onScroll={
+              (window.onscroll = () => {
+                scrollFunction();
+              })
+            }
+            onClick={changeNavbarBg}
+            type='button'
+            data-bs-toggle='collapse'
+            data-bs-target='#navbarNav'
+            aria-controls='navbarNav'
+            aria-expanded='false'
+            aria-label='Toggle navigation'
+          >
             <span className='navbar-toggler-icon'></span>
           </button>
           <div className='collapse navbar-collapse' id='navbarNav'>
@@ -85,10 +107,10 @@ export default function Navbar() {
             <span className='me-3 line-photo'></span>
             <div className='contianer d-flex' id='users-logged'>
               <Link to='/home'>
-                <img src={user?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover' />
+                <img src={userLogin?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover' />
               </Link>
               <div className='d-flex-column ms-3 me-5 py-2'>
-                <p className='mb-0 fw-medium'>{user?.name}</p>
+                <p className='mb-0 fw-medium'>{userLogin?.name}</p>
                 <Link to='/' className='nav-link text-logout' onClick={handleLogout}>
                   Logout
                 </Link>

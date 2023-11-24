@@ -12,6 +12,8 @@ import EditRecipe from './pages/Recipes/EditRecipe';
 import SearchRecipes from './pages/Recipes/SearchRecipes';
 import Auth from './components/Auth';
 import IsLogin from './components/IsLogin';
+import Profile from './pages/Profile/Profile';
+import ChangePassword from './pages/Profile/ChangePassword';
 
 function App() {
   return (
@@ -73,6 +75,23 @@ function App() {
             element={
               <Auth>
                 <SearchRecipes />
+              </Auth>
+            }
+          />
+          <Route
+            path='/profile/:id'
+            element={
+              <Auth>
+                <Profile />
+              </Auth>
+            }
+          />
+
+          <Route
+            path='/change-password/:id'
+            element={
+              <Auth>
+                <ChangePassword />
               </Auth>
             }
           />

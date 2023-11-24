@@ -93,7 +93,7 @@ export default function DetailRecipe() {
   useEffect(() => {
     console.log(data);
     console.log('detail ', detailRecipe);
-  }, [data, detailRecipe, countRecipe]);
+  }, [data, detailRecipe]);
 
   const handleEvent = (eventStatus) => {
     axios

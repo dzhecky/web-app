@@ -1,0 +1,68 @@
+.img-user {
+  margin-top: 100px;
+}
+
+.edit-profile {
+  /* height: 100vh; */
+  display: flex;
+  align-items: center;
+}
+
+.btn-change-photo-profile {
+  position: relative;
+  left: auto;
+  right: auto;
+  overflow: hidden;
+  margin-top: 15px;
+  background-color: white;
+  border: 0;
+  margin-bottom: 0 !important;
+}
+
+.btn-change-photo-profile input[type='file'] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.name,
+.email,
+.change-password {
+  /* max-width: 300px; */
+  color: #8692a6;
+  font-weight: 500;
+}
+
+.btn-update-profile {
+  width: 100%;
+  margin-top: 50px;
+  padding: 15px 10px;
+  font-weight: 500;
+}
+
+.change-password a {
+  text-decoration: none;
+}
+
+.input-name,
+.input-email,
+.old-password,
+.new-password {
+  color: #8692a6 !important;
+  border: 1px solid #8692a6 !important;
+  padding: 15px 10px;
+}
+
+@media (min-width: 768px) {
+  .name,
+  .email,
+  .change-password {
+    width: 500px;
+  }
+
+  .btn-update {
+    width: 500px;
+  }
+}
