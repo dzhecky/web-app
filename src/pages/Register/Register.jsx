@@ -1,12 +1,80 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 import '../../assets/styles/utility.css';
 import '../../assets/styles/auth.css';
 import logoApp from '../../assets/icon/barbecue 1.svg';
-import { Link } from 'react-router-dom';
+
+const base_url = import.meta.env.VITE_BASE_URL;
 
 export default function Register() {
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    terms: '',
+  });
+
+  const onChangeInput = (e, field) => {
+    setForm({
+      ...form,
+      [field]: e,
+    });
+    console.log(form);
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    if (form.terms !== true) {
+      Swal.fire({
+        title: 'Failed!',
+        text: `You must agree terms & conditions`,
+        icon: 'error',
+      });
+    } else if (form.name === '' || form.email === '' || form.password === '') {
+      Swal.fire({
+        title: 'Failed!',
+        text: `Name, Email or Password is required!`,
+        icon: 'error',
+      });
+    } else {
+      axios
+        .post(
+          base_url + `/auth/register`,
+          {
+            name: form.name,
+            email: form.email,
+            password: form.password,
+          },
+          {
+            headers: { 'content-type': 'application/x-www-form-urlencoded' },
+          }
+        )
+        .then((res) => {
+          console.log(res);
+          Swal.fire({
+            title: 'Success!',
+            text: res.data.message,
+            icon: 'success',
+          });
+          return navigate('/login');
+        })
+        .catch((err) => {
+          console.log(err);
+          Swal.fire({
+            title: 'Failed!',
+            text: `error :  ${err.response.data.message}`,
+            icon: 'error',
+          });
+        });
+    }
+  };
   return (
     <div>
       <div className='container-fluid d-flex flex-column justify-content-center register ff-poppins'>
@@ -18,21 +86,21 @@ export default function Register() {
           <span className='line'></span>
         </header>
         <div className='container auth-container'>
-          <form action='' method='post'>
+          <form onSubmit={(e) => onSubmit(e)}>
             <div className='mb-3'>
               <label className='form-label text-label'>Name</label>
-              <input type='text' className='form-control p-3 text-input' id='name' placeholder='Name' />
+              <input type='text' className='form-control p-3 text-input' id='name' placeholder='Name' onChange={(e) => onChangeInput(e.target.value, 'name')} />
             </div>
             <div className='mb-3'>
               <label className='form-label text-label'>E-mail</label>
-              <input type='email' className='form-control p-3 text-input' id='email' placeholder='E-mail' />
+              <input type='email' className='form-control p-3 text-input' id='email' placeholder='E-mail' onChange={(e) => onChangeInput(e.target.value, 'email')} />
             </div>
             <div className='mb-3'>
               <label className='form-label text-label'>Password</label>
-              <input type='password' className='form-control p-3 text-input' id='password' placeholder='Password' />
+              <input type='password' className='form-control p-3 text-input' id='password' placeholder='Password' onChange={(e) => onChangeInput(e.target.value, 'password')} />
             </div>
             <div className='mb-3 form-check'>
-              <input type='checkbox' className='form-check-input' id='terms' />
+              <input type='checkbox' className='form-check-input' id='terms' onChange={(e) => onChangeInput(e.target.checked, 'terms')} />
               <label className='form-check-label text-label'>I agree to terms and conditions</label>
             </div>
             <button type='submit' className='btn background-primary w-100 text-light mb-2 p-3 text-white'>
