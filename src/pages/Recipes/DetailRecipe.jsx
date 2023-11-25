@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import ReactPaginate from 'react-paginate';
 
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -12,7 +13,6 @@ import '../../assets/styles/utility.css';
 import '../../assets/styles/detailRecipe.css';
 import iconBookmark from '../../../public/bookmark.svg';
 import iconLike from '../../../public/like.svg';
-import imgUser from '../../../public/user.png';
 
 const base_url = import.meta.env.VITE_BASE_URL;
 
@@ -21,8 +21,19 @@ export default function DetailRecipe() {
   const [data, setData] = useState([]);
   const [detailRecipe, setDetailRecipe] = useState({});
   const [countRecipe, setCountRecipe] = useState();
-
+  const [countLike, setCountLike] = useState([]);
+  const [comments, setComments] = useState([]);
   const { id } = useParams();
+  const [formComment, setFormComment] = useState({
+    id_recipe: id,
+    comment: '',
+  });
+
+  // pagination comments
+  const [pageComments, setPageComments] = useState(0);
+  const [limitComments, setLimitComments] = useState(5);
+  const [pagesComments, setPagesComments] = useState(0);
+  const [rowsComments, setRowsComments] = useState(0);
 
   useEffect(() => {
     let item = {
@@ -90,6 +101,113 @@ export default function DetailRecipe() {
     // console.log('axios get count recipe menu');
   }, [detailRecipe.uuid_author]);
 
+  //get comments recipes
+  const getComments = (id) => {
+    let commentRecipeUrl = `/comments/${id}?page=${pageComments}&limit=${limitComments}`;
+
+    axios
+      .get(base_url + commentRecipeUrl, {
+        headers: {
+          token: `${localStorage.getItem('token')}`,
+        },
+      })
+      .then((res) => {
+        console.log('comments ', res);
+        setComments(res.data.data);
+        setPageComments(res.data.pagination.currentPage);
+        setPagesComments(res.data.pagination.totalPage);
+        setRowsComments(res.data.pagination.totalRows);
+        console.log('comments ', comments);
+      })
+      .catch((err) => console.log(err));
+    console.log('axios get comment recipe menu');
+  };
+  useEffect(() => {
+    getComments(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, pageComments]);
+
+  const changePage = (data) => {
+    let currentPage = data.selected + 1;
+    setPageComments(currentPage);
+  };
+
+  const onChangeInput = (e, field) => {
+    setFormComment({
+      ...formComment,
+      [field]: e,
+    });
+    console.log(formComment);
+  };
+
+  const onSubmitComment = (e) => {
+    e.preventDefault();
+
+    if (formComment.comment === '') {
+      Swal.fire({
+        title: 'Failed!',
+        text: `Comment is required`,
+        icon: 'error',
+      });
+    } else {
+      axios
+        .post(
+          base_url + `/comments`,
+          {
+            id_recipe: formComment.id_recipe,
+            comment: formComment.comment,
+          },
+          {
+            headers: {
+              token: `${localStorage.getItem('token')}`,
+              'content-type': 'application/x-www-form-urlencoded',
+            },
+          }
+        )
+        .then((res) => {
+          console.log(res);
+          Swal.fire({
+            title: 'Success!',
+            text: 'Succes add comment!',
+            icon: 'success',
+          });
+          getComments(id);
+        })
+        .catch((err) => {
+          console.log(err);
+          Swal.fire({
+            title: 'Failed!',
+            text: `error :  ${err.response.data.message}`,
+            icon: 'error',
+          });
+        });
+    }
+  };
+
+  // get count like
+  const getCounLike = (id) => {
+    let countLikeUrl = `/event/count-liked/${id}`;
+
+    axios
+      .get(base_url + countLikeUrl, {
+        headers: {
+          token: `${localStorage.getItem('token')}`,
+        },
+      })
+      .then((res) => {
+        console.log('countLike ', res);
+        setCountLike(res.data.data);
+        console.log('countLike ', countLike);
+      })
+      .catch((err) => console.log(err));
+    console.log('axios get count like');
+  };
+
+  useEffect(() => {
+    getCounLike(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
   useEffect(() => {
     console.log(data);
     console.log('detail ', detailRecipe);
@@ -117,6 +235,7 @@ export default function DetailRecipe() {
           text: `Recipe successfully ${res.data.data.status}ed`,
           icon: 'success',
         });
+        getCounLike(id);
       })
       .catch((err) => {
         Swal.fire({
@@ -195,7 +314,9 @@ export default function DetailRecipe() {
         </div>
         <div className='text-sm-end text-sm-start fw-medium pt-3 ps-4' id='users-status'>
           <p className='my-0 fw-medium' id='date'></p>
-          <p className='my-0 fw-medium'>20 Likes - 2 Comments</p>
+          <p className='my-0 fw-medium'>
+            {countLike?.map((items) => items.count)} Likes - {rowsComments} Comments
+          </p>
         </div>
       </header>
       <section className='container detail-menu ff-poppins' id='detail-recipes'>
@@ -219,23 +340,45 @@ export default function DetailRecipe() {
           <img src={iconLike} alt='like' />
         </button>
         <div className='box-comments mt-3'>
-          <div className='comments d-flex align-items-center mb-5 flex-wrap'>
-            <img src={imgUser} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
-            <div className='commentators d-flex flex-column ms-3 h-100 justify-content-center'>
-              <p className='mb-0 fw-medium'>Karen</p>
-              <p className='text-recipe mb-0'>20 Recipes</p>
+          {comments?.map((items) => {
+            return (
+              <div className='comments d-flex align-items-center mb-5 flex-wrap' key={items.id_comment}>
+                <img src={items?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
+                <div className='commentators d-flex flex-column ms-3 h-100 justify-content-center'>
+                  <p className='mb-0 fw-medium'>{items?.commenter}</p>
+                  <p className='text-recipe mb-0'>{items?.total_recipes} Recipes</p>
+                </div>
+                <span className='ms-4 me-4 line-photo-user'></span>
+                <p className='mb-0 fw-medium'>{items?.commentar}</p>
+              </div>
+            );
+          })}
+          <div className='container d-flex flex-column justify-content-center gap-2 mt-5' id='paging'>
+            <span className='color-grey align-self-center'>Total Comments {rowsComments} Comments</span>
+            <span className='color-grey align-self-center'>
+              Page {pageComments} of {pagesComments}
+            </span>
+            <div className='container d-flex justify-content-center gap-4'>
+              <ReactPaginate
+                previousLabel={'Prev'}
+                nextLabel={'Next'}
+                breakLabel={'...'}
+                pageCount={Math.min(10, pagesComments)}
+                onPageChange={changePage}
+                marginPagesDisplayed={3}
+                pageRangeDisplayed={3}
+                containerClassName={'pagination'}
+                pageClassName={'page-item'}
+                pageLinkClassName={'page-link'}
+                previousClassName={'page-item'}
+                previousLinkClassName={'page-link background-primary text-white'}
+                nextClassName={'page-item'}
+                nextLinkClassName={'page-link background-primary text-white'}
+                breakClassName={'page-item'}
+                breakLinkClassName={'page-link'}
+                activeClassName={'active'}
+              />
             </div>
-            <span className='ms-4 me-4 line-photo-user'></span>
-            <p className='mb-0 fw-medium'>Wow, I just made this and it was delicious! Thanks for sharing!</p>
-          </div>
-          <div className='comments d-flex align-items-center mb-5 flex-wrap'>
-            <img src={imgUser} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
-            <div className='commentators d-flex flex-column ms-3 h-100 justify-content-center'>
-              <p className='mb-0 fw-medium'>Ariel</p>
-              <p className='text-recipe mb-0'>20 Recipes</p>
-            </div>
-            <span className='ms-4 me-4 line-photo-user'></span>
-            <p className='mb-0 fw-medium'>So simple and delicious!</p>
           </div>
         </div>
       </section>
@@ -243,10 +386,12 @@ export default function DetailRecipe() {
 
       {/* <!-- Create Comments Start --> */}
       <section className='container ff-poppins' id='create-comments'>
-        <form action=''>
+        <form onSubmit={onSubmitComment}>
           <div className='form-comment'>
-            <textarea className='form-control py-4 px-4' placeholder='Your comment here' rows='7' cols='70'></textarea>
-            <button className='btn btn-comment'>Send a comment</button>
+            <textarea className='form-control py-4 px-4' placeholder='Your comment here' rows='7' cols='70' name='comment' onChange={(e) => onChangeInput(e.target.value, 'comment')}></textarea>
+            <button type='submit' className='btn btn-comment'>
+              Send a comment
+            </button>
           </div>
         </form>
       </section>

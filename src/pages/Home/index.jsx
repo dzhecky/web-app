@@ -78,7 +78,7 @@ export default function Home() {
   };
 
   const getBookmarked = () => {
-    let menuUrl = `event/bookmarked?page=${pageBookmark}&limit=${limit}`;
+    let menuUrl = `/event/bookmarked?page=${pageBookmark}&limit=${limit}`;
 
     axios
       .get(base_url + menuUrl, {
@@ -97,7 +97,7 @@ export default function Home() {
   };
 
   const getLiked = () => {
-    let menuUrl = `event/liked?page=${pageLike}&limit=${limit}`;
+    let menuUrl = `/event/liked?page=${pageLike}&limit=${limit}`;
 
     axios
       .get(base_url + menuUrl, {
@@ -404,11 +404,11 @@ export default function Home() {
                         </p>
                         <a onClick={() => toDetailRecipe(items.id_recipe)} className='text-decoration-none text-dark'>
                           <div className='status d-flex background-primary text-white justify-content-around py-2 btn'>
-                            <span>10 Likes</span>
+                            <span>{items.like} Likes</span>
                             <span>-</span>
-                            <span>12 Comment</span>
+                            <span>{items.comments} Comment</span>
                             <span>-</span>
-                            <span>3 bookmark</span>
+                            <span>{items.bookmark} bookmark</span>
                           </div>
                         </a>
                         <div className='d-flex mt-4'>
@@ -474,11 +474,11 @@ export default function Home() {
                         </p>
                         <a onClick={() => toDetailRecipe(items.id_recipe)} className='text-decoration-none text-dark'>
                           <div className='status d-flex background-primary text-white justify-content-around py-2 btn'>
-                            <span>10 Likes</span>
+                            <span>{items.like} Likes</span>
                             <span>-</span>
-                            <span>12 Comment</span>
+                            <span>{items.comments} Comment</span>
                             <span>-</span>
-                            <span>3 bookmark</span>
+                            <span>{items.bookmark} bookmark</span>
                           </div>
                         </a>
                         <div className='d-flex mt-4'>
@@ -541,11 +541,11 @@ export default function Home() {
                         </p>
                         <a onClick={() => toDetailRecipe(items.id_recipe)} className='text-decoration-none text-dark'>
                           <div className='status d-flex background-primary text-white justify-content-around py-2 btn'>
-                            <span>10 Likes</span>
+                            <span>{items.like} Likes</span>
                             <span>-</span>
-                            <span>12 Comment</span>
+                            <span>{items.comments} Comment</span>
                             <span>-</span>
-                            <span>3 bookmark</span>
+                            <span>{items.bookmark} bookmark</span>
                           </div>
                         </a>
                         <div className='d-flex mt-4'>

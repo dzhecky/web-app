@@ -122,11 +122,11 @@ export default function SearchRecipes() {
                             {items.ingredients.join(', ')}
                           </p>
                           <div className='status d-flex background-primary text-white justify-content-around py-2 btn'>
-                            <span>10 Likes</span>
+                            <span>{items.like} Likes</span>
                             <span>-</span>
-                            <span>12 Comment</span>
+                            <span>{items.comments} Comment</span>
                             <span>-</span>
-                            <span>3 bookmark</span>
+                            <span>{items.bookmark} bookmark</span>
                           </div>
                           <div className='d-flex mt-4'>
                             <img src={items.photo_author} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover' />
