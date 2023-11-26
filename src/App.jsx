@@ -14,6 +14,7 @@ import Auth from './components/Auth';
 import IsLogin from './components/IsLogin';
 import Profile from './pages/Profile/Profile';
 import ChangePassword from './pages/Profile/ChangePassword';
+import ResetPassword from './pages/ForgotPassword/ResetPassword';
 
 function App() {
   return (
@@ -95,6 +96,8 @@ function App() {
               </Auth>
             }
           />
+
+          <Route path='/reset-password' element={<ResetPassword />} />
         </Routes>
       </HashRouter>
     </>
