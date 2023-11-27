@@ -13,6 +13,10 @@
   font-weight: 900;
 }
 
+#navbarNav {
+  height: 85px;
+}
+
 .nav-shadow {
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);
 }

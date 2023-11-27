@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-import NavbarLanding from '../../components/NavbarLanding';
+import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import icSearch from '../../assets/icon/search.svg';
 import heroImg from '../../assets/image/hero.jpg';
@@ -74,7 +74,7 @@ export default function Landing() {
 
   return (
     <>
-      <NavbarLanding />
+      <Navbar />
       <div className='container-fluid ff-poppins'>
         {/* <!-- Hero Section Start --> */}
         <section className='hero row' id='hero'>

@@ -88,34 +88,63 @@ export default function Navbar() {
           </button>
           <div className='collapse navbar-collapse' id='navbarNav'>
             <ul className='navbar-nav me-auto mb-2 mb-lg-0 ms-lg-5 ms-md-5'>
-              <li className='nav-item me-5'>
-                <NavLink to='/home' className='nav-link' aria-current='page'>
-                  Home
-                </NavLink>
-              </li>
-              <li className='nav-item me-5'>
-                <NavLink to='/add-recipe' className='nav-link'>
-                  Add Recipe
-                </NavLink>
-              </li>
-              <li className='nav-item me-5'>
-                <NavLink to='/search-recipes' className='nav-link' href='./searchRecipes.html'>
-                  Search Recipes
-                </NavLink>
-              </li>
+              {localStorage.getItem('token') ? (
+                <>
+                  <li className='nav-item me-5'>
+                    <NavLink to='/home' className='nav-link' aria-current='page' onClick={() => localStorage.removeItem('addRecipes', 'true')}>
+                      Home
+                    </NavLink>
+                  </li>
+                  <li className='nav-item me-5'>
+                    <NavLink to='/add-recipe' className='nav-link' onClick={() => localStorage.setItem('addRecipes', 'true')}>
+                      Add Recipe
+                    </NavLink>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li className='nav-item me-5'>
+                    <Link to='/register' className='nav-link' aria-current='page'>
+                      <span>Register</span>
+                    </Link>
+                  </li>
+                  <li className='nav-item me-5'>
+                    <Link to='/login' className='nav-link'>
+                      <span>Login</span>
+                    </Link>
+                  </li>
+                </>
+              )}
+              {localStorage.getItem('addRecipes') == 'true' ? (
+                <li className='nav-item me-5'>
+                  <NavLink to={`/profile/${localStorage.getItem('uuid')}`} className='nav-link'>
+                    Profile
+                  </NavLink>
+                </li>
+              ) : (
+                <li className='nav-item me-5'>
+                  <NavLink to='/search-recipes' className='nav-link' onClick={() => localStorage.removeItem('addRecipes', 'true')}>
+                    Search Recipes
+                  </NavLink>
+                </li>
+              )}
             </ul>
-            <span className='me-3 line-photo'></span>
-            <div className='contianer d-flex' id='users-logged'>
-              <Link to='/home'>
-                <img src={userLogin?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover' />
-              </Link>
-              <div className='d-flex-column ms-3 me-5 py-2'>
-                <p className='mb-0 fw-medium'>{userLogin?.name}</p>
-                <Link to='/' className='nav-link text-logout' onClick={handleLogout}>
-                  Logout
-                </Link>
-              </div>
-            </div>
+            {localStorage.getItem('token') ? (
+              <>
+                <span className='me-3 line-photo'></span>
+                <div className='contianer d-flex' id='users-logged'>
+                  <Link to='/home'>
+                    <img src={userLogin?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover' />
+                  </Link>
+                  <div className='d-flex-column ms-3 me-5 py-2'>
+                    <p className='mb-0 fw-medium'>{userLogin?.name}</p>
+                    <Link to='/' className='nav-link text-logout' onClick={handleLogout}>
+                      Logout
+                    </Link>
+                  </div>
+                </div>
+              </>
+            ) : null}
           </div>
         </div>
       </nav>

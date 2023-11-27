@@ -45,28 +45,14 @@ export default function DetailRecipe() {
     };
     localStorage.getItem('name') && setUser(item);
     showDate();
+    countRecipes();
+    getCounLike(id);
+    getComments(id);
+    getDetailRecipe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [detailRecipe.uuid_author, id]);
 
-  useEffect(() => {
-    let menuUrl = `/recipe/show/myrecipes`;
-
-    axios
-      .get(base_url + menuUrl, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        setData(res.data.data);
-      })
-      .catch((err) => console.log(err));
-    console.log('axios get recipe menu');
-  }, []);
-
-  // get detail recipe
-  useEffect(() => {
+  const getDetailRecipe = () => {
     let detailRecipeUrl = `/recipe/detail/${id}`;
 
     axios
@@ -81,11 +67,11 @@ export default function DetailRecipe() {
       })
       .catch((err) => console.log(err));
     console.log('axios get recipe menu');
-  }, [id]);
+  };
 
-  //get count recipes
-  useEffect(() => {
+  const countRecipes = () => {
     let countRecipeUrl = `/recipe/count/${detailRecipe.uuid_author}`;
+    console.log('count recipes', detailRecipe.uuid_author);
 
     axios
       .get(base_url + countRecipeUrl, {
@@ -98,8 +84,7 @@ export default function DetailRecipe() {
         setCountRecipe(res.data.data);
       })
       .catch((err) => console.log(err));
-    // console.log('axios get count recipe menu');
-  }, [detailRecipe.uuid_author]);
+  };
 
   //get comments recipes
   const getComments = (id) => {
@@ -122,10 +107,6 @@ export default function DetailRecipe() {
       .catch((err) => console.log(err));
     console.log('axios get comment recipe menu');
   };
-  useEffect(() => {
-    getComments(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, pageComments]);
 
   const changePage = (data) => {
     let currentPage = data.selected + 1;
@@ -202,16 +183,6 @@ export default function DetailRecipe() {
       .catch((err) => console.log(err));
     console.log('axios get count like');
   };
-
-  useEffect(() => {
-    getCounLike(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  useEffect(() => {
-    console.log(data);
-    console.log('detail ', detailRecipe);
-  }, [data, detailRecipe]);
 
   const handleEvent = (eventStatus) => {
     axios

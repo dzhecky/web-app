@@ -19,15 +19,20 @@ export default function SearchRecipes() {
   // eslint-disable-next-line no-unused-vars
   const [limit, setLimit] = useState(5);
   const [pages, setPages] = useState(0);
+  // const [currentPages, setCurrentPages] = useState(1);
   const [rows, setRows] = useState(0);
   const [keyword, setKeyword] = useState('');
   const [query, setQuery] = useState('');
   const [message, setMessage] = useState('');
+  const [category, setCategory] = useState({});
+  const [idCategory, setIdCategory] = useState();
+  const [popular, setPopular] = useState();
+  const [toggleBtnCategory, setToggleBtnCategory] = useState();
 
   const navigate = useNavigate();
 
   const getAllRecipe = () => {
-    let recipeUrl = `/recipe?search=${keyword}&page=${page}&limit=${limit}`;
+    let recipeUrl = `/recipe?search=${keyword}&page=${page}&limit=${limit}&category=${idCategory}&popular=${popular}`;
 
     axios
       .get(base_url + recipeUrl, {
@@ -56,12 +61,33 @@ export default function SearchRecipes() {
   };
 
   useEffect(() => {
+    let categoryUrl = `/category`;
+
+    axios
+      .get(base_url + categoryUrl, {
+        headers: {
+          token: `${localStorage.getItem('token')}`,
+        },
+      })
+      .then((res) => {
+        console.log('get category', res);
+        setCategory(res.data);
+      })
+      .catch((err) => console.log(err));
+    console.log('axios get category');
+  }, []);
+
+  useEffect(() => {
     getAllRecipe();
+    console.log('page', page);
+    console.log('pages', pages);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, keyword]);
+  }, [page, keyword, idCategory]);
 
   const changePage = (data) => {
+    setKeyword('');
     let currentPage = data.selected + 1;
+    // setCurrentPages(currentPage);
     setPage(currentPage);
     if (currentPage === 10) {
       setMessage(`If you don't find the recipe you are looking for, please enter specific keywords`);
@@ -74,6 +100,33 @@ export default function SearchRecipes() {
     e.preventDefault();
     setPage(0);
     setKeyword(query);
+  };
+
+  const handleCategory = (id_category) => {
+    setToggleBtnCategory(id_category);
+    setKeyword('');
+    setPage(0);
+    setPages(0);
+    setIdCategory(id_category);
+    setPopular('');
+  };
+
+  const handleNewRecipes = (index) => {
+    setToggleBtnCategory(index);
+    setKeyword('');
+    setPage(0);
+    setPages(0);
+    setIdCategory('');
+    setPopular('');
+  };
+
+  const handlePopular = (index) => {
+    setToggleBtnCategory(index);
+    setKeyword('');
+    setPage(0);
+    setPages(0);
+    setIdCategory('');
+    setPopular('popular');
   };
 
   const toDetailRecipe = (id) => {
@@ -96,10 +149,24 @@ export default function SearchRecipes() {
             </div>
           </form>
           <div className='d-flex flex-wrap mt-3 tag gap-3'>
-            <button className='btn background-primary color-white px-3'>New</button>
-            <button className='btn background-primary color-white px-3'>Popular</button>
-            <button className='btn background-green color-white px-3'>Vegetarian</button>
-            <button className='btn background-green color-white px-3'>Breakfast</button>
+            <button className={toggleBtnCategory === 3 ? 'btn background-primary color-white px-3 btn-active' : 'btn background-primary color-white px-3'} onClick={() => handleNewRecipes(3)}>
+              New
+            </button>
+            <button className={toggleBtnCategory === 4 ? 'btn background-primary color-white px-3 btn-active' : 'btn background-primary color-white px-3'} onClick={() => handlePopular(4)}>
+              Popular
+            </button>
+            {category.result?.map((items) => {
+              return (
+                <button
+                  className={toggleBtnCategory === items.id_category ? 'btn background-green color-white px-3 btn-active' : 'btn background-green color-white px-3'}
+                  key={items.id_category}
+                  value={items.id_category}
+                  onClick={() => handleCategory(items.id_category)}
+                >
+                  {items.name}
+                </button>
+              );
+            })}
           </div>
         </section>
         {/* <!-- Hero Section End--> */}
@@ -122,7 +189,7 @@ export default function SearchRecipes() {
                             {items.ingredients.join(', ')}
                           </p>
                           <div className='status d-flex background-primary text-white justify-content-around py-2 btn'>
-                            <span>{items.like} Likes</span>
+                            <span>{items.liked} Likes</span>
                             <span>-</span>
                             <span>{items.comments} Comment</span>
                             <span>-</span>
@@ -145,17 +212,17 @@ export default function SearchRecipes() {
             <div className='h-50 background-primary align-self-end line-decoration'></div>
           </div>
           <div className='container d-flex flex-column justify-content-center gap-2 mt-5 mb-5' id='paging'>
-            <span className='color-grey align-self-center'>Total Recipes {rows} Recipes</span>
+            <span className='color-grey align-self-center'>Total Recipes {data.length > 0 ? rows : 0} Recipes</span>
             <span className='color-grey align-self-center'>
-              Page {page} of {pages}
+              Page {page} of {page ? pages : 0}
             </span>
             <span className='color-grey align-self-center'>{message}</span>
-            <div className='container d-flex justify-content-center gap-4 mb-5'>
+            <div className='container d-flex justify-content-center gap-4 mb-5' key={rows}>
               <ReactPaginate
                 previousLabel={'Prev'}
                 nextLabel={'Next'}
                 breakLabel={'...'}
-                pageCount={Math.min(10, pages)}
+                pageCount={Math.min(10, page ? pages : 0)}
                 onPageChange={changePage}
                 marginPagesDisplayed={3}
                 pageRangeDisplayed={3}
