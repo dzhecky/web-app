@@ -2,20 +2,26 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import axios from 'axios';
+// import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { getCategory } from '../../redux/actions/category';
+import { postRecipes } from '../../redux/actions/addRecipes';
 
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import '../../assets/styles/utility.css';
 import '../../assets/styles/addRecipe.css';
+import { getMyRecipes } from '../../redux/actions/home';
+import { Link } from 'react-router-dom';
 
-const base_url = import.meta.env.VITE_BASE_URL;
+// const base_url = import.meta.env.VITE_BASE_URL;
 
 export default function AddRecipe() {
   const navigate = useNavigate();
   const [photo, setPhoto] = useState();
-  const [category, setCategory] = useState({});
+  // const [category, setCategory] = useState({});
   const [inputData, setInputData] = useState({
     photo_url: '',
     title: '',
@@ -23,26 +29,26 @@ export default function AddRecipe() {
     category_id: '1',
   });
 
-  useEffect(() => {
-    let categoryUrl = `/category`;
+  const dispatch = useDispatch();
+  const category = useSelector((state) => state.category);
+  const addRecipes = useSelector((state) => state.addRecipes);
 
-    axios
-      .get(base_url + categoryUrl, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-        },
-      })
-      .then((res) => {
-        console.log('get category', res);
-        setCategory(res.data);
-      })
-      .catch((err) => console.log(err));
-    console.log('axios get category');
+  if (addRecipes.isLoading) {
+    Swal.fire({
+      title: 'Uploading...',
+      html: 'Please wait...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  }
+
+  useEffect(() => {
+    dispatch(getCategory());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    console.log('Category ', category);
-  }, [category]);
 
   const postData = () => {
     let bodyData = new FormData();
@@ -51,32 +57,7 @@ export default function AddRecipe() {
     bodyData.append('ingredients', inputData.ingredients);
     bodyData.append('id_category', inputData.category_id);
 
-    axios
-      .post(base_url + '/recipe', bodyData, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then((res) => {
-        console.log('success input data!');
-        console.log(res);
-        Swal.fire({
-          title: 'Success!',
-          text: res.data.message,
-          icon: 'success',
-        });
-        navigate('/home');
-      })
-      .catch((err) => {
-        console.log('failed input data!');
-        console.log(err);
-        Swal.fire({
-          title: 'Failed!',
-          text: `error :  ${err.response.data.messsage || err.response.data.message} `,
-          icon: 'error',
-        });
-      });
+    dispatch(postRecipes(bodyData));
   };
 
   const handlePostData = (event) => {
@@ -130,13 +111,15 @@ export default function AddRecipe() {
             </div>
             <div className='mb-3'>
               <select name='category_id' id='category' className='btn py-3' onChange={onChange}>
-                {category.result?.map((items, index) => {
-                  return (
-                    <option value={parseInt(items.id_category)} key={index + 1}>
-                      {items.name}
-                    </option>
-                  );
-                })}
+                {category.isSuccess
+                  ? category?.data?.map((items, index) => {
+                      return (
+                        <option value={parseInt(items.id_category)} key={index + 1}>
+                          {items.name}
+                        </option>
+                      );
+                    })
+                  : null}
               </select>
             </div>
             <div className='mb-3 d-flex justify-content-center'>

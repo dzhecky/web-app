@@ -1,130 +1,44 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
-import axios from 'axios';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
 import Swal from 'sweetalert2';
 import Paginations from '../../components/Paginations';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { getMyRecipes, getMyBookmark, getMyLike, deleteMyRecipe, deleteMyBookmark, deleteMyLike } from '../../redux/actions/home';
+import { getDetailUser } from '../../redux/actions/user';
 
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import '../../assets/styles/utility.css';
 import '../../assets/styles/home.css';
 
-const base_url = import.meta.env.VITE_BASE_URL;
-
 export default function Home() {
-  const [userLogin, setUserLogin] = useState();
-  const [data, setData] = useState([]);
-  const [bookmark, setBookmark] = useState([]);
-  const [like, setLike] = useState([]);
   const [page, setPage] = useState(0);
   const [pageBookmark, setPageBookmark] = useState(0);
   const [pageLike, setPageLike] = useState(0);
   // eslint-disable-next-line no-unused-vars
   const [limit, setLimit] = useState(5);
-  const [pages, setPages] = useState(0);
-  const [pagesBookmark, setPagesBookmark] = useState(0);
-  const [pagesLike, setPagesLike] = useState(0);
-  const [rows, setRows] = useState(0);
-  const [rowsBookmark, setRowsBookmark] = useState(0);
-  const [rowsLike, setRowsLike] = useState(0);
   const [toggleTabs, setToggleTabs] = useState(1);
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+  const myRecipes = useSelector((state) => state.myRecipes);
+  const myBookmark = useSelector((state) => state.myBookmark);
+  const myLike = useSelector((state) => state.myLike);
+  const detailUser = useSelector((state) => state.detailUser);
+
   useEffect(() => {
+    dispatch(getMyRecipes(page, limit));
+    dispatch(getMyBookmark(pageBookmark, limit));
+    dispatch(getMyLike(pageLike, limit));
+    dispatch(getDetailUser());
     showDate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    let detailUserUrl = `/users/${localStorage.getItem('uuid')}`;
-
-    axios
-      .get(base_url + detailUserUrl, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        setUserLogin(res.data.result);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    console.log('axios get detail user');
-  }, []);
-
-  const getMyRecipes = () => {
-    let menuUrl = `/recipe/show/myrecipes?page=${page}&limit=${limit}`;
-
-    axios
-      .get(base_url + menuUrl, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-        },
-      })
-      .then((res) => {
-        // console.log(res);
-        setData(res.data.data);
-        setPage(res.data.pagination.currentPage);
-        setPages(res.data.pagination.totalPage);
-        setRows(res.data.pagination.totalRows);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const getBookmarked = () => {
-    let menuUrl = `/event/bookmarked?page=${pageBookmark}&limit=${limit}`;
-
-    axios
-      .get(base_url + menuUrl, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-        },
-      })
-      .then((res) => {
-        // console.log(res);
-        setBookmark(res.data.data);
-        setPageBookmark(res.data.pagination.currentPage);
-        setPagesBookmark(res.data.pagination.totalPage);
-        setRowsBookmark(res.data.pagination.totalRows);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const getLiked = () => {
-    let menuUrl = `/event/liked?page=${pageLike}&limit=${limit}`;
-
-    axios
-      .get(base_url + menuUrl, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-        },
-      })
-      .then((res) => {
-        // console.log(res);
-        setLike(res.data.data);
-        setPageLike(res.data.pagination.currentPage);
-        setPagesLike(res.data.pagination.totalPage);
-        setRowsLike(res.data.pagination.totalRows);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  useEffect(() => {
-    getMyRecipes();
-    getBookmarked();
-    getLiked();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [limit, page, pageBookmark, pageLike]);
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   const changePage = (data) => {
     let currentPage = data.selected + 1;
@@ -141,69 +55,6 @@ export default function Home() {
     setPageLike(currentPage);
   };
 
-  const deleteRecipe = (id) => {
-    axios
-      .delete(base_url + `/recipe/${id}`, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        Swal.fire({
-          title: 'Success!',
-          text: res.data.message,
-          icon: 'success',
-        });
-        getMyRecipes();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const deleteBookmark = (id) => {
-    axios
-      .delete(base_url + `/event/bookmark/${id}`, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        Swal.fire({
-          title: 'Success!',
-          text: res.data.message,
-          icon: 'success',
-        });
-        getBookmarked();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const deleteLike = (id) => {
-    axios
-      .delete(base_url + `/event/like/${id}`, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        Swal.fire({
-          title: 'Success!',
-          text: res.data.message,
-          icon: 'success',
-        });
-        getLiked();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   const handleDeleteRecipe = (id) => {
     Swal.fire({
       icon: 'warning',
@@ -215,7 +66,7 @@ export default function Home() {
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteRecipe(id);
+        dispatch(deleteMyRecipe(id));
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         return false;
       }
@@ -233,7 +84,7 @@ export default function Home() {
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteBookmark(id);
+        dispatch(deleteMyBookmark(id));
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         return false;
       }
@@ -251,7 +102,7 @@ export default function Home() {
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteLike(id);
+        dispatch(deleteMyLike(id));
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         return false;
       }
@@ -272,9 +123,6 @@ export default function Home() {
 
   const handleTabActive = (index) => {
     setToggleTabs(index);
-    getMyRecipes();
-    getBookmarked();
-    getLiked();
   };
 
   // Get date
@@ -340,10 +188,10 @@ export default function Home() {
           {/* <a className='text-decoration-none text-dark'> */}
           <div className='d-flex align-items-center' id='users-avatar' onClick={() => toDetailPorifile(localStorage.getItem('uuid'))}>
             <span className='me-3 line-photo-user'></span>
-            <img src={userLogin?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
+            <img src={detailUser.data?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
             <div className='d-flex flex-column ms-3 h-100 justify-content-center'>
-              <p className='mb-0 fw-medium'>{userLogin?.name}</p>
-              <p className='text-recipe mb-0'>{rows} Recipes</p>
+              <p className='mb-0 fw-medium'>{detailUser.data?.name}</p>
+              <p className='text-recipe mb-0'>{myRecipes.data?.data.length !== 0 ? myRecipes.data?.pagination?.totalRows : 0} Recipes</p>
             </div>
           </div>
           {/* </a> */}
@@ -387,53 +235,68 @@ export default function Home() {
         <section className={toggleTabs === 1 ? 'menu-recipes container active-content' : 'menu-recipes container'} id='recipes'>
           <div className='content-left' id='my-recipes'>
             <div className='card mb-3 mt-5 card-menu border-0'>
-              {data?.map((items) => {
-                return (
-                  <div className='row g-0 mb-5' key={items.id_recipe}>
-                    <div className='col-md-6' onClick={() => toDetailRecipe(items.id_recipe)}>
-                      <img src={items.photo} className='img-fluid rounded w-100 img-my-recipes object-fit-cover' alt='image-recipe' />
-                    </div>
-                    <div className='container col-md-6 p-0 recipe-info'>
-                      <div className='ms-md-4 card-body ps-1 pt-md-0 d-flex flex-column h-100 justify-content-between'>
-                        <h3 className='card-title mb-4 color-grey fw-medium' onClick={() => toDetailRecipe(items.id_recipe)}>
-                          {items.title}
-                        </h3>
-                        <p className='card-text fw-medium mb-3 color-grey'>
-                          <span className='fw-semibold'>Ingredients:</span> <br />
-                          {items.ingredients.join(', ')}
-                        </p>
-                        <a onClick={() => toDetailRecipe(items.id_recipe)} className='text-decoration-none text-dark'>
-                          <div className='status d-flex background-primary text-white justify-content-around py-2 btn'>
-                            <span>{items.like} Likes</span>
-                            <span>-</span>
-                            <span>{items.comments} Comment</span>
-                            <span>-</span>
-                            <span>{items.bookmark} bookmark</span>
+              {myRecipes.isLoading ? (
+                <div className='d-flex flex-column align-items-center'>
+                  <div className='spinner-grow text-warning' role='status'></div>
+                  <span className='text-warning mt-1'>Loading</span>
+                </div>
+              ) : null}
+              {myRecipes.isSuccess
+                ? myRecipes.data?.data.length !== 0
+                  ? myRecipes.data.data?.map((items) => {
+                      return (
+                        <div className='row g-0 mb-5' key={items.id_recipe}>
+                          <div className='col-md-6' onClick={() => toDetailRecipe(items.id_recipe)}>
+                            <img src={items.photo} className='img-fluid rounded w-100 img-my-recipes object-fit-cover' alt='image-recipe' />
                           </div>
-                        </a>
-                        <div className='d-flex mt-4'>
-                          <a className='btn btn-primary me-4' onClick={() => toEditRecipe(items.id_recipe)}>
-                            Edit Recipe
-                          </a>
-                          <button className='btn btn-danger' type='button' onClick={() => handleDeleteRecipe(items.id_recipe)}>
-                            Delete Recipe
-                          </button>
+                          <div className='container col-md-6 p-0 recipe-info'>
+                            <div className='ms-md-4 card-body ps-1 pt-md-0 d-flex flex-column h-100 justify-content-between'>
+                              <h3 className='card-title mb-4 color-grey fw-medium' onClick={() => toDetailRecipe(items.id_recipe)}>
+                                {items.title}
+                              </h3>
+                              <p className='card-text fw-medium mb-3 color-grey'>
+                                <span className='fw-semibold'>Ingredients:</span> <br />
+                                {items.ingredients.join(', ')}
+                              </p>
+                              <a onClick={() => toDetailRecipe(items.id_recipe)} className='text-decoration-none text-dark'>
+                                <div className='status d-flex background-primary text-white justify-content-around py-2 btn'>
+                                  <span>{items.like} Likes</span>
+                                  <span>-</span>
+                                  <span>{items.comments} Comment</span>
+                                  <span>-</span>
+                                  <span>{items.bookmark} bookmark</span>
+                                </div>
+                              </a>
+                              <div className='d-flex mt-4'>
+                                <a className='btn btn-primary me-4' onClick={() => toEditRecipe(items.id_recipe)}>
+                                  Edit Recipe
+                                </a>
+                                <button className='btn btn-danger' type='button' onClick={() => handleDeleteRecipe(items.id_recipe)}>
+                                  Delete Recipe
+                                </button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+                      );
+                    })
+                  : myRecipes.data.message
+                : null}
+              {myRecipes.isError ? <div className='text-center'>{myRecipes?.errorMessage}</div> : null}
             </div>
           </div>
           <div className='container d-flex flex-column justify-content-center gap-2 mt-5 mb-5' id='paging'>
-            <Paginations rows={rows} page={page} pages={pages} />
+            <Paginations
+              rows={myRecipes.data?.data.length !== 0 ? myRecipes.data?.pagination?.totalRows : 0}
+              page={myRecipes.data?.data.length !== 0 ? myRecipes.data?.pagination?.currentPage : 0}
+              pages={myRecipes.data?.data.length !== 0 ? myRecipes.data?.pagination?.totalPage : 0}
+            />
             <div className='container d-flex justify-content-center gap-4 mb-5'>
               <ReactPaginate
                 previousLabel={'Prev'}
                 nextLabel={'Next'}
                 breakLabel={'...'}
-                pageCount={Math.min(10, pages)}
+                pageCount={Math.min(10, myRecipes.data?.pagination?.totalPage)}
                 onPageChange={changePage}
                 marginPagesDisplayed={3}
                 pageRangeDisplayed={3}
@@ -457,50 +320,65 @@ export default function Home() {
         <section className={toggleTabs === 2 ? 'menu-recipes container active-content' : 'menu-recipes container'} id='recipes'>
           <div className='content-left' id='my-recipes'>
             <div className='card mb-3 mt-5 card-menu border-0'>
-              {bookmark?.map((items) => {
-                return (
-                  <div className='row g-0 mb-5' key={items.id_recipe}>
-                    <div className='col-md-6' onClick={() => toDetailRecipe(items.id_recipe)}>
-                      <img src={items.photo} className='img-fluid rounded w-100 img-my-recipes object-fit-cover' alt='image-recipe' />
-                    </div>
-                    <div className='container col-md-6 p-0 recipe-info'>
-                      <div className='ms-md-4 card-body ps-1 pt-md-0 d-flex flex-column h-100 justify-content-between'>
-                        <h3 className='card-title mb-4 color-grey fw-medium' onClick={() => toDetailRecipe(items.id_recipe)}>
-                          {items.title}
-                        </h3>
-                        <p className='card-text fw-medium mb-3 color-grey'>
-                          <span className='fw-semibold'>Ingredients:</span> <br />
-                          {items.ingredients.join(', ')}
-                        </p>
-                        <a onClick={() => toDetailRecipe(items.id_recipe)} className='text-decoration-none text-dark'>
-                          <div className='status d-flex background-primary text-white justify-content-around py-2 btn'>
-                            <span>{items.like} Likes</span>
-                            <span>-</span>
-                            <span>{items.comments} Comment</span>
-                            <span>-</span>
-                            <span>{items.bookmark} bookmark</span>
+              {myBookmark.isLoading ? (
+                <div className='d-flex flex-column align-items-center'>
+                  <div className='spinner-grow text-warning' role='status'></div>
+                  <span className='text-warning mt-1'>Loading</span>
+                </div>
+              ) : null}
+              {myBookmark.isSuccess
+                ? myBookmark.data?.data.length !== 0
+                  ? myBookmark.data.data?.map((items) => {
+                      return (
+                        <div className='row g-0 mb-5' key={items.id_recipe}>
+                          <div className='col-md-6' onClick={() => toDetailRecipe(items.id_recipe)}>
+                            <img src={items.photo} className='img-fluid rounded w-100 img-my-recipes object-fit-cover' alt='image-recipe' />
                           </div>
-                        </a>
-                        <div className='d-flex mt-4'>
-                          <button className='btn btn-danger' type='button' onClick={() => handleDeleteBookmark(items.id)}>
-                            Delete From Bookmark
-                          </button>
+                          <div className='container col-md-6 p-0 recipe-info'>
+                            <div className='ms-md-4 card-body ps-1 pt-md-0 d-flex flex-column h-100 justify-content-between'>
+                              <h3 className='card-title mb-4 color-grey fw-medium' onClick={() => toDetailRecipe(items.id_recipe)}>
+                                {items.title}
+                              </h3>
+                              <p className='card-text fw-medium mb-3 color-grey'>
+                                <span className='fw-semibold'>Ingredients:</span> <br />
+                                {items.ingredients.join(', ')}
+                              </p>
+                              <a onClick={() => toDetailRecipe(items.id_recipe)} className='text-decoration-none text-dark'>
+                                <div className='status d-flex background-primary text-white justify-content-around py-2 btn'>
+                                  <span>{items.like} Likes</span>
+                                  <span>-</span>
+                                  <span>{items.comments} Comment</span>
+                                  <span>-</span>
+                                  <span>{items.bookmark} bookmark</span>
+                                </div>
+                              </a>
+                              <div className='d-flex mt-4'>
+                                <button className='btn btn-danger' type='button' onClick={() => handleDeleteBookmark(items.id)}>
+                                  Delete From Bookmark
+                                </button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+                      );
+                    })
+                  : myBookmark.data?.message
+                : null}
+              {myBookmark.isError ? <div className='text-center'>{myBookmark?.errorMessage}</div> : null}
             </div>
           </div>
           <div className='container d-flex flex-column justify-content-center gap-2 mt-5 mb-5' id='paging'>
-            <Paginations rows={rowsBookmark} page={pageBookmark} pages={pagesBookmark} />
+            <Paginations
+              rows={myBookmark.data?.data.length !== 0 ? myBookmark.data?.pagination?.totalRows : 0}
+              page={myBookmark.data?.data.length !== 0 ? myBookmark.data?.pagination?.currentPage : 0}
+              pages={myBookmark.data?.data.length !== 0 ? myBookmark.data?.pagination?.totalPage : 0}
+            />
             <div className='container d-flex justify-content-center gap-4 mb-5'>
               <ReactPaginate
                 previousLabel={'Prev'}
                 nextLabel={'Next'}
                 breakLabel={'...'}
-                pageCount={Math.min(10, pagesBookmark)}
+                pageCount={Math.min(10, myBookmark.data?.data.length !== 0 ? myBookmark.data?.pagination?.totalPage : 0)}
                 onPageChange={changePageBookmark}
                 marginPagesDisplayed={3}
                 pageRangeDisplayed={3}
@@ -524,50 +402,65 @@ export default function Home() {
         <section className={toggleTabs === 3 ? 'menu-recipes container active-content' : 'menu-recipes container'} id='recipes'>
           <div className='content-left' id='my-recipes'>
             <div className='card mb-3 mt-5 card-menu border-0'>
-              {like?.map((items) => {
-                return (
-                  <div className='row g-0 mb-5' key={items.id_recipe}>
-                    <div className='col-md-6' onClick={() => toDetailRecipe(items.id_recipe)}>
-                      <img src={items.photo} className='img-fluid rounded w-100 img-my-recipes object-fit-cover' alt='image-recipe' />
-                    </div>
-                    <div className='container col-md-6 p-0 recipe-info'>
-                      <div className='ms-md-4 card-body ps-1 pt-md-0 d-flex flex-column h-100 justify-content-between'>
-                        <h3 className='card-title mb-4 color-grey fw-medium' onClick={() => toDetailRecipe(items.id_recipe)}>
-                          {items.title}
-                        </h3>
-                        <p className='card-text fw-medium mb-3 color-grey'>
-                          <span className='fw-semibold'>Ingredients:</span> <br />
-                          {items.ingredients.join(', ')}
-                        </p>
-                        <a onClick={() => toDetailRecipe(items.id_recipe)} className='text-decoration-none text-dark'>
-                          <div className='status d-flex background-primary text-white justify-content-around py-2 btn'>
-                            <span>{items.like} Likes</span>
-                            <span>-</span>
-                            <span>{items.comments} Comment</span>
-                            <span>-</span>
-                            <span>{items.bookmark} bookmark</span>
+              {myLike.isLoading ? (
+                <div className='d-flex flex-column align-items-center'>
+                  <div className='spinner-grow text-warning' role='status'></div>
+                  <span className='text-warning mt-1'>Loading</span>
+                </div>
+              ) : null}
+              {myLike.isSuccess
+                ? myLike.data?.data.length !== 0
+                  ? myLike.data.data?.map((items) => {
+                      return (
+                        <div className='row g-0 mb-5' key={items.id_recipe}>
+                          <div className='col-md-6' onClick={() => toDetailRecipe(items.id_recipe)}>
+                            <img src={items.photo} className='img-fluid rounded w-100 img-my-recipes object-fit-cover' alt='image-recipe' />
                           </div>
-                        </a>
-                        <div className='d-flex mt-4'>
-                          <button className='btn btn-danger' type='button' onClick={() => handleDeleteLike(items.id)}>
-                            Delete From Like
-                          </button>
+                          <div className='container col-md-6 p-0 recipe-info'>
+                            <div className='ms-md-4 card-body ps-1 pt-md-0 d-flex flex-column h-100 justify-content-between'>
+                              <h3 className='card-title mb-4 color-grey fw-medium' onClick={() => toDetailRecipe(items.id_recipe)}>
+                                {items.title}
+                              </h3>
+                              <p className='card-text fw-medium mb-3 color-grey'>
+                                <span className='fw-semibold'>Ingredients:</span> <br />
+                                {items.ingredients.join(', ')}
+                              </p>
+                              <a onClick={() => toDetailRecipe(items.id_recipe)} className='text-decoration-none text-dark'>
+                                <div className='status d-flex background-primary text-white justify-content-around py-2 btn'>
+                                  <span>{items.like} Likes</span>
+                                  <span>-</span>
+                                  <span>{items.comments} Comment</span>
+                                  <span>-</span>
+                                  <span>{items.bookmark} bookmark</span>
+                                </div>
+                              </a>
+                              <div className='d-flex mt-4'>
+                                <button className='btn btn-danger' type='button' onClick={() => handleDeleteLike(items.id)}>
+                                  Delete From Like
+                                </button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+                      );
+                    })
+                  : myLike.data.message
+                : null}
+              {myLike.isError ? <div className='text-center'>{myLike?.errorMessage}</div> : null}
             </div>
           </div>
           <div className='container d-flex flex-column justify-content-center gap-2 mt-5 mb-5' id='paging'>
-            <Paginations rows={rowsLike} page={pageLike} pages={pagesLike} />
+            <Paginations
+              rows={myLike.data?.data.length !== 0 ? myLike.data?.pagination?.totalRows : 0}
+              page={myLike.data?.data.length !== 0 ? myLike.data?.pagination?.currentPage : 0}
+              pages={myLike.data?.data.length !== 0 ? myLike.data?.pagination?.totalPage : 0}
+            />
             <div className='container d-flex justify-content-center gap-4 mb-5'>
               <ReactPaginate
                 previousLabel={'Prev'}
                 nextLabel={'Next'}
                 breakLabel={'...'}
-                pageCount={Math.min(10, pagesLike)}
+                pageCount={Math.min(10, myLike.data?.data.length !== 0 ? myLike.data?.pagination?.totalPage : 0)}
                 onPageChange={changePageLike}
                 marginPagesDisplayed={3}
                 pageRangeDisplayed={3}
