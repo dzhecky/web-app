@@ -7,19 +7,20 @@ const initialState = {
 };
 
 const deleteBookmarkReducers = (state = initialState, action) => {
-  if (action.type === 'DELETE_BOOKMARK PENDING') {
+  if (action.type === 'DELETE_BOOKMARK_PENDING') {
     return {
       ...state,
       isLoading: true,
     };
-  } else if (action.type === 'DELETE_BOOKMARK SUCCESS') {
+  } else if (action.type === 'DELETE_BOOKMARK_SUCCESS') {
     return {
       ...state,
       isLoading: false,
       isSuccess: true,
+      isError: false,
       data: action.payload,
     };
-  } else if (action.type === 'DELETE_BOOKMARK ERROR') {
+  } else if (action.type === 'DELETE_BOOKMARK_ERROR') {
     return {
       ...state,
       isLoading: false,

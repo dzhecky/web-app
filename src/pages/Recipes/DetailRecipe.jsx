@@ -1,11 +1,13 @@
-/* eslint-disable no-unused-vars */
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import ReactPaginate from 'react-paginate';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { getComments, postComments } from '../../redux/actions/comments';
+import { getDetailRecipe, getCountRecipes, postEvent } from '../../redux/actions/recipes';
 
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -14,15 +16,7 @@ import '../../assets/styles/detailRecipe.css';
 import iconBookmark from '../../../public/bookmark.svg';
 import iconLike from '../../../public/like.svg';
 
-const base_url = import.meta.env.VITE_BASE_URL;
-
 export default function DetailRecipe() {
-  const [user, setUser] = useState();
-  const [data, setData] = useState([]);
-  const [detailRecipe, setDetailRecipe] = useState({});
-  const [countRecipe, setCountRecipe] = useState();
-  const [countLike, setCountLike] = useState([]);
-  const [comments, setComments] = useState([]);
   const { id } = useParams();
   const [formComment, setFormComment] = useState({
     id_recipe: id,
@@ -31,82 +25,22 @@ export default function DetailRecipe() {
 
   // pagination comments
   const [pageComments, setPageComments] = useState(0);
+  // eslint-disable-next-line no-unused-vars
   const [limitComments, setLimitComments] = useState(5);
-  const [pagesComments, setPagesComments] = useState(0);
-  const [rowsComments, setRowsComments] = useState(0);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const comments = useSelector((state) => state.comments);
+  const detailRecipe = useSelector((state) => state.detailRecipe);
+  const countRecipes = useSelector((state) => state.countRecipes);
 
   useEffect(() => {
-    let item = {
-      name: localStorage.getItem('name'),
-      uuid: localStorage.getItem('uuid'),
-      photo: localStorage.getItem('photo'),
-      token: localStorage.getItem('token'),
-      refreshToken: localStorage.getItem('refreshToken'),
-    };
-    localStorage.getItem('name') && setUser(item);
     showDate();
-    countRecipes();
-    getCounLike(id);
-    getComments(id);
-    getDetailRecipe();
+    dispatch(getCountRecipes(detailRecipe.data?.uuid_author));
+    dispatch(getComments(id, pageComments, limitComments));
+    dispatch(getDetailRecipe(id));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [detailRecipe.uuid_author, id]);
-
-  const getDetailRecipe = () => {
-    let detailRecipeUrl = `/recipe/detail/${id}`;
-
-    axios
-      .get(base_url + detailRecipeUrl, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        setDetailRecipe(res.data.data);
-      })
-      .catch((err) => console.log(err));
-    console.log('axios get recipe menu');
-  };
-
-  const countRecipes = () => {
-    let countRecipeUrl = `/recipe/count/${detailRecipe.uuid_author}`;
-    console.log('count recipes', detailRecipe.uuid_author);
-
-    axios
-      .get(base_url + countRecipeUrl, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-        },
-      })
-      .then((res) => {
-        // console.log(res);
-        setCountRecipe(res.data.data);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  //get comments recipes
-  const getComments = (id) => {
-    let commentRecipeUrl = `/comments/${id}?page=${pageComments}&limit=${limitComments}`;
-
-    axios
-      .get(base_url + commentRecipeUrl, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-        },
-      })
-      .then((res) => {
-        console.log('comments ', res);
-        setComments(res.data.data);
-        setPageComments(res.data.pagination.currentPage);
-        setPagesComments(res.data.pagination.totalPage);
-        setRowsComments(res.data.pagination.totalRows);
-        console.log('comments ', comments);
-      })
-      .catch((err) => console.log(err));
-    console.log('axios get comment recipe menu');
-  };
+  }, [detailRecipe.data?.uuid_author, id, pageComments, limitComments]);
 
   const changePage = (data) => {
     let currentPage = data.selected + 1;
@@ -131,90 +65,28 @@ export default function DetailRecipe() {
         icon: 'error',
       });
     } else {
-      axios
-        .post(
-          base_url + `/comments`,
-          {
-            id_recipe: formComment.id_recipe,
-            comment: formComment.comment,
-          },
-          {
-            headers: {
-              token: `${localStorage.getItem('token')}`,
-              'content-type': 'application/x-www-form-urlencoded',
-            },
-          }
-        )
-        .then((res) => {
-          console.log(res);
-          Swal.fire({
-            title: 'Success!',
-            text: 'Succes add comment!',
-            icon: 'success',
-          });
-          getComments(id);
-        })
-        .catch((err) => {
-          console.log(err);
-          Swal.fire({
-            title: 'Failed!',
-            text: `error :  ${err.response.data.message}`,
-            icon: 'error',
-          });
-        });
+      let data = {
+        id_recipe: formComment.id_recipe,
+        comment: formComment.comment,
+      };
+      dispatch(postComments(data));
+      setFormComment({
+        ...formComment,
+        comment: '',
+      });
     }
   };
 
-  // get count like
-  const getCounLike = (id) => {
-    let countLikeUrl = `/event/count-liked/${id}`;
-
-    axios
-      .get(base_url + countLikeUrl, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-        },
-      })
-      .then((res) => {
-        console.log('countLike ', res);
-        setCountLike(res.data.data);
-        console.log('countLike ', countLike);
-      })
-      .catch((err) => console.log(err));
-    console.log('axios get count like');
+  const handleEvent = (eventStatus) => {
+    let data = {
+      recipes_id: id,
+      status: eventStatus,
+    };
+    dispatch(postEvent(data, navigate));
   };
 
-  const handleEvent = (eventStatus) => {
-    axios
-      .post(
-        base_url + `/event`,
-        {
-          recipes_id: id,
-          status: eventStatus,
-        },
-        {
-          headers: {
-            token: `${localStorage.getItem('token')}`,
-            'content-type': 'application/x-www-form-urlencoded',
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res);
-        Swal.fire({
-          title: 'Success!',
-          text: `Recipe successfully ${res.data.data.status}ed`,
-          icon: 'success',
-        });
-        getCounLike(id);
-      })
-      .catch((err) => {
-        Swal.fire({
-          title: 'Failed!',
-          text: `error :  ${err.response.data.message}`,
-          icon: 'error',
-        });
-      });
+  const clearFormComments = () => {
+    document.getElementById('text-area-comments').value = '';
   };
 
   // Get date
@@ -277,26 +149,26 @@ export default function DetailRecipe() {
       <header className='container d-sm-flex align-items-center justify-content-between ff-poppins' id='hero'>
         <div className='d-flex align-items-center' id='users-avatar'>
           <span className='me-3 line-photo-user'></span>
-          <img src={detailRecipe?.photo_author} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
+          <img src={detailRecipe.data?.photo_author} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
           <div className='d-flex flex-column ms-3 h-100 justify-content-center'>
-            <p className='mb-0 fw-medium'>{detailRecipe?.author}</p>
-            <p className='text-recipe mb-0'>{countRecipe?.count} Recipes</p>
+            <p className='mb-0 fw-medium'>{detailRecipe.data?.author}</p>
+            <p className='text-recipe mb-0'>{countRecipes?.data.count} Recipes</p>
           </div>
         </div>
         <div className='text-sm-end text-sm-start fw-medium pt-3 ps-4' id='users-status'>
           <p className='my-0 fw-medium' id='date'></p>
           <p className='my-0 fw-medium'>
-            {countLike?.map((items) => items.count)} Likes - {rowsComments} Comments
+            {detailRecipe.data?.like} Likes - {comments?.data?.pagination?.totalRows} Comments
           </p>
         </div>
       </header>
       <section className='container detail-menu ff-poppins' id='detail-recipes'>
-        <h1 className='text-center color-blue mt-5'>{detailRecipe.title}</h1>
-        <img src={detailRecipe.photo} alt='detail-menu' className='rounded mx-auto d-block mt-5' />
+        <h1 className='text-center color-blue mt-5'>{detailRecipe.data?.title}</h1>
+        <img src={detailRecipe.data?.photo} alt='detail-menu' className='rounded mx-auto d-block mt-5' />
         <div className='list-ingredients'>
           <h4 className='mt-3'>Ingredients:</h4>
           <ul>
-            {detailRecipe.ingredients?.map((items, index) => {
+            {detailRecipe.data?.ingredients?.map((items, index) => {
               return <li key={index}>- {items}</li>;
             })}
           </ul>
@@ -311,7 +183,7 @@ export default function DetailRecipe() {
           <img src={iconLike} alt='like' />
         </button>
         <div className='box-comments mt-3'>
-          {comments?.map((items) => {
+          {comments?.data?.data?.map((items) => {
             return (
               <div className='comments d-flex align-items-center mb-5 flex-wrap' key={items.id_comment}>
                 <img src={items?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
@@ -325,16 +197,16 @@ export default function DetailRecipe() {
             );
           })}
           <div className='container d-flex flex-column justify-content-center gap-2 mt-5' id='paging'>
-            <span className='color-grey align-self-center'>Total Comments {rowsComments} Comments</span>
+            <span className='color-grey align-self-center'>Total Comments {comments?.data?.pagination?.totalRows} Comments</span>
             <span className='color-grey align-self-center'>
-              Page {pageComments} of {pagesComments}
+              Page {comments?.data?.pagination?.currentPage} of {comments?.data?.pagination?.totalPage}
             </span>
             <div className='container d-flex justify-content-center gap-4'>
               <ReactPaginate
                 previousLabel={'Prev'}
                 nextLabel={'Next'}
                 breakLabel={'...'}
-                pageCount={Math.min(10, pagesComments)}
+                pageCount={Math.min(10, comments?.data?.pagination?.totalPage)}
                 onPageChange={changePage}
                 marginPagesDisplayed={3}
                 pageRangeDisplayed={3}
@@ -359,8 +231,8 @@ export default function DetailRecipe() {
       <section className='container ff-poppins' id='create-comments'>
         <form onSubmit={onSubmitComment}>
           <div className='form-comment'>
-            <textarea className='form-control py-4 px-4' placeholder='Your comment here' rows='7' cols='70' name='comment' onChange={(e) => onChangeInput(e.target.value, 'comment')}></textarea>
-            <button type='submit' className='btn btn-comment'>
+            <textarea className='form-control py-4 px-4' id='text-area-comments' placeholder='Your comment here' rows='7' cols='70' name='comment' onChange={(e) => onChangeInput(e.target.value, 'comment')}></textarea>
+            <button type='submit' className='btn btn-comment' onClick={clearFormComments}>
               Send a comment
             </button>
           </div>

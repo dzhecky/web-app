@@ -3,22 +3,36 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { forgotPasswordAction } from '../../redux/actions/auth';
 
 import '../../assets/styles/utility.css';
 import '../../assets/styles/auth.css';
 import logoApp from '../../assets/icon/barbecue 1.svg';
 
-const base_url = import.meta.env.VITE_BASE_URL;
-
 export default function ForgotPassword() {
   const [email, setEmail] = useState();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const authForgotPassword = useSelector((state) => state.authForgotPassword);
 
   const changeEmail = (e) => {
     setEmail(e.target.value);
     console.log(email);
   };
+
+  if (authForgotPassword.isLoading) {
+    Swal.fire({
+      title: 'Sending code OTP to your email...',
+      html: 'Please wait...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  }
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -29,33 +43,9 @@ export default function ForgotPassword() {
         text: `Email is required`,
         icon: 'error',
       });
+    } else {
+      dispatch(forgotPasswordAction({ email }, navigate));
     }
-
-    axios
-      .post(
-        base_url + `/auth/forgot-password`,
-        {
-          email: email,
-        },
-        { headers: { 'content-type': 'application/x-www-form-urlencoded' } }
-      )
-      .then((res) => {
-        console.log(res);
-        Swal.fire({
-          title: 'Success!',
-          text: res.data.message,
-          icon: 'success',
-        });
-        return navigate('/reset-password');
-      })
-      .catch((err) => {
-        console.log(err);
-        Swal.fire({
-          title: 'Failed!',
-          text: `error :  ${err.response.data.message}`,
-          icon: 'error',
-        });
-      });
   };
 
   return (

@@ -2,16 +2,15 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { putPofile } from '../../redux/actions/user';
 
 import '../../assets/styles/utility.css';
 import '../../assets/styles/profile.css';
 
-const base_url = import.meta.env.VITE_BASE_URL;
-
 export default function Profile() {
-  const [user, setUser] = useState([]);
   const [photo, setPhoto] = useState();
   const [form, setForm] = useState({
     photo: '',
@@ -20,40 +19,19 @@ export default function Profile() {
 
   const { id } = useParams();
   const navigate = useNavigate();
-
-  const getDetailUser = () => {
-    let detailUserUrl = `/users/${id}`;
-
-    axios
-      .get(base_url + detailUserUrl, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        setUser(res.data.result);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    console.log('axios get detail user');
-  };
-
-  useEffect(() => {
-    getDetailUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const dispatch = useDispatch();
+  const detailUser = useSelector((state) => state.detailUser);
+  const editProfile = useSelector((state) => state.editProfile);
 
   useEffect(() => {
     setForm({
       ...form,
-      photo: user.photo,
-      name: user.name,
+      photo: detailUser?.data?.photo,
+      name: detailUser?.data?.name,
     });
     console.log(form);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, []);
 
   const onChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -61,37 +39,24 @@ export default function Profile() {
     console.log(form);
   };
 
+  if (editProfile.isLoading) {
+    Swal.fire({
+      title: 'Updating your profile...',
+      html: 'Please wait...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  }
+
   const putData = () => {
     let bodyData = new FormData();
     bodyData.append('photo', photo);
     bodyData.append('name', form.name);
 
-    axios
-      .put(base_url + `/users/${id}`, bodyData, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then((res) => {
-        console.log('success update data!');
-        console.log(res);
-        Swal.fire({
-          title: 'Success!',
-          text: res.data.message,
-          icon: 'success',
-        });
-        navigate('/home');
-      })
-      .catch((err) => {
-        console.log('failed update data!');
-        console.log(err);
-        Swal.fire({
-          title: 'Failed!',
-          text: `error :  ${err.response.data.messsage}`,
-          icon: 'error',
-        });
-      });
+    dispatch(putPofile(id, bodyData, navigate));
   };
 
   const handleUpdate = (event) => {
@@ -108,7 +73,7 @@ export default function Profile() {
       if (result.isConfirmed) {
         putData();
       } else if (result.dismiss === Swal.DismissReason.cancel) {
-        getDetailUser();
+        navigate('/home');
         return false;
       }
     });
@@ -132,7 +97,6 @@ export default function Profile() {
           <form onSubmit={handleUpdate}>
             <div className='mb-3'>
               {form.photo && <img src={form.photo} className='d-block img-user mx-auto rounded-circle object-fit-cover' width='250' height='250' />}
-
               <div className='d-flex justify-content-center mb-3'>
                 <button className='btn-change-photo-profile fw-medium color-blue'>
                   Change Profile Picture
@@ -150,12 +114,12 @@ export default function Profile() {
               <label htmlFor='exampleInputEmail1' className='form-label'>
                 Email
               </label>
-              <input type='email' className='form-control input-email' id='exampleInputEmail1' value={user?.email} aria-describedby='emailHelp' />
+              <input type='email' className='form-control input-email' id='exampleInputEmail1' value={detailUser?.data?.email} aria-describedby='emailHelp' />
             </div>
             <div className='mb-3 change-password mx-auto'>
               <p>
                 Change password?
-                <a className='color-primary ms-1' onClick={() => toChangePassword(localStorage.getItem('uuid'))}>
+                <a className='color-primary ms-1' onClick={() => toChangePassword(detailUser.data.uuid)}>
                   Click here
                 </a>
               </p>

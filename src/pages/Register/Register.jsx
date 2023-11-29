@@ -2,14 +2,14 @@
 import React from 'react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { registerAction } from '../../redux/actions/auth';
 
 import '../../assets/styles/utility.css';
 import '../../assets/styles/auth.css';
 import logoApp from '../../assets/icon/barbecue 1.svg';
-
-const base_url = import.meta.env.VITE_BASE_URL;
 
 export default function Register() {
   const navigate = useNavigate();
@@ -19,6 +19,20 @@ export default function Register() {
     password: '',
     terms: '',
   });
+  const dispatch = useDispatch();
+  const authRegister = useSelector((state) => state.authRegister);
+
+  if (authRegister.isLoading) {
+    Swal.fire({
+      title: 'Sending activation to your email...',
+      html: 'Please wait...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  }
 
   const onChangeInput = (e, field) => {
     setForm({
@@ -44,35 +58,7 @@ export default function Register() {
         icon: 'error',
       });
     } else {
-      axios
-        .post(
-          base_url + `/auth/register`,
-          {
-            name: form.name,
-            email: form.email,
-            password: form.password,
-          },
-          {
-            headers: { 'content-type': 'application/x-www-form-urlencoded' },
-          }
-        )
-        .then((res) => {
-          console.log(res);
-          Swal.fire({
-            title: 'Success!',
-            text: res.data.message,
-            icon: 'success',
-          });
-          return navigate('/login');
-        })
-        .catch((err) => {
-          console.log(err);
-          Swal.fire({
-            title: 'Failed!',
-            text: `error :  ${err.response.data.message}`,
-            icon: 'error',
-          });
-        });
+      dispatch(registerAction(form.name, form.email, form.password, navigate));
     }
   };
   return (

@@ -1,15 +1,15 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
-import axios from 'axios';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { loginAction } from '../../redux/actions/auth';
 
 import '../../assets/styles/utility.css';
 import '../../assets/styles/auth.css';
 import logoApp from '../../assets/icon/barbecue 1.svg';
-
-const base_url = import.meta.env.VITE_BASE_URL;
 
 export default function Login() {
   const navigate = useNavigate();
@@ -18,6 +18,20 @@ export default function Login() {
     password: '',
     terms: '',
   });
+  const dispatch = useDispatch();
+  const authLogin = useSelector((state) => state.authLogin);
+
+  if (authLogin.isLoading) {
+    Swal.fire({
+      title: 'Login...',
+      html: 'Please wait...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  }
 
   const onChangeInput = (e, field) => {
     setForm({
@@ -43,38 +57,7 @@ export default function Login() {
         icon: 'error',
       });
     } else {
-      axios
-        .post(
-          base_url + `/auth/login`,
-          {
-            email: form.email,
-            password: form.password,
-          },
-          { headers: { 'content-type': 'application/x-www-form-urlencoded' } }
-        )
-        .then((res) => {
-          console.log(res);
-          localStorage.setItem('name', res.data.name);
-          localStorage.setItem('email', res.data.email);
-          localStorage.setItem('uuid', res.data.uuid);
-          localStorage.setItem('photo', res.data.photo);
-          localStorage.setItem('token', res.data.token.accessToken);
-          localStorage.setItem('refreshToken', res.data.token.refreshToken);
-          Swal.fire({
-            title: 'Success!',
-            text: res.data.message,
-            icon: 'success',
-          });
-          return navigate('/home');
-        })
-        .catch((err) => {
-          console.log(err);
-          Swal.fire({
-            title: 'Failed!',
-            text: `error :  ${err.response.data.message}`,
-            icon: 'error',
-          });
-        });
+      dispatch(loginAction(form.email, form.password, navigate));
     }
   };
 

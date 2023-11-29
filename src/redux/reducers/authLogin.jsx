@@ -6,13 +6,13 @@ const initialState = {
   errorMessage: '',
 };
 
-const categoryReducers = (state = initialState, action) => {
-  if (action.type === 'GET_CATEGORY_PENDING') {
+const authLoginReducers = (state = initialState, action) => {
+  if (action.type === 'AUTH_LOGIN_PENDING') {
     return {
       ...state,
       isLoading: true,
     };
-  } else if (action.type === 'GET_CATEGORY_SUCCESS') {
+  } else if (action.type === 'AUTH_LOGIN_SUCCESS') {
     return {
       ...state,
       isLoading: false,
@@ -20,7 +20,7 @@ const categoryReducers = (state = initialState, action) => {
       isError: false,
       data: action.payload,
     };
-  } else if (action.type === 'GET_CATEGORY_ERROR') {
+  } else if (action.type === 'AUTH_LOGIN_ERROR') {
     return {
       ...state,
       isLoading: false,
@@ -28,9 +28,18 @@ const categoryReducers = (state = initialState, action) => {
       isError: true,
       errorMessage: action.payload,
     };
+  } else if (action.type === 'AUTH_LOGOUT') {
+    return {
+      ...state,
+      data: null,
+      isError: false,
+      isSuccess: false,
+      isLoading: false,
+      errorMessage: '',
+    };
   } else {
     return state;
   }
 };
 
-export default categoryReducers;
+export default authLoginReducers;

@@ -1,11 +1,11 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
 import { useState } from 'react';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
 
-const base_url = import.meta.env.VITE_BASE_URL;
+import { resetPasswordAction } from '../../redux/actions/auth';
 
 export default function ResetPassword() {
   const [form, setForm] = useState({
@@ -13,6 +13,8 @@ export default function ResetPassword() {
     password: '',
   });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const authResetPassword = useSelector((state) => state.authResetPassword);
 
   const onChange = (e, field) => {
     setForm({
@@ -21,6 +23,18 @@ export default function ResetPassword() {
     });
     console.log(form);
   };
+
+  if (authResetPassword.isLoading) {
+    Swal.fire({
+      title: 'Updating your password...',
+      html: 'Please wait...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  }
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -33,32 +47,7 @@ export default function ResetPassword() {
       });
     }
 
-    axios
-      .post(
-        base_url + `/auth/reset-password`,
-        {
-          otp: form.otp,
-          password: form.password,
-        },
-        { headers: { 'content-type': 'application/x-www-form-urlencoded' } }
-      )
-      .then((res) => {
-        console.log(res);
-        Swal.fire({
-          title: 'Success!',
-          text: res.data.message,
-          icon: 'success',
-        });
-        return navigate('/login');
-      })
-      .catch((err) => {
-        console.log(err);
-        Swal.fire({
-          title: 'Failed!',
-          text: `error :  ${err.response.data.message}`,
-          icon: 'error',
-        });
-      });
+    dispatch(resetPasswordAction(form.otp, form.password, navigate));
   };
   return (
     <div>

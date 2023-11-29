@@ -1,39 +1,20 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { logoutAction } from '../redux/actions/authLogout';
 
 import '../assets/styles/utility.css';
 import '../assets/styles/navbar.css';
 
-const base_url = import.meta.env.VITE_BASE_URL;
-
 export default function Navbar() {
-  const [userLogin, setUserLogin] = useState();
-
-  useEffect(() => {
-    let detailUserUrl = `/users/${localStorage.getItem('uuid')}`;
-
-    axios
-      .get(base_url + detailUserUrl, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        setUserLogin(res.data.result);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    console.log('axios get detail user');
-  }, []);
+  const dispatch = useDispatch();
+  const authLogin = useSelector((state) => state.authLogin);
+  const detailUser = useSelector((state) => state.detailUser);
 
   const handleLogout = () => {
-    setUserLogin(null);
-    localStorage.clear();
+    dispatch(logoutAction());
     return;
   };
 
@@ -88,7 +69,7 @@ export default function Navbar() {
           </button>
           <div className='collapse navbar-collapse' id='navbarNav'>
             <ul className='navbar-nav me-auto mb-2 mb-lg-0 ms-lg-5 ms-md-5'>
-              {localStorage.getItem('token') ? (
+              {authLogin.data ? (
                 <>
                   <li className='nav-item me-5'>
                     <NavLink to='/home' className='nav-link' aria-current='page' onClick={() => localStorage.removeItem('addRecipes', 'true')}>
@@ -117,7 +98,7 @@ export default function Navbar() {
               )}
               {localStorage.getItem('addRecipes') == 'true' ? (
                 <li className='nav-item me-5'>
-                  <NavLink to={`/profile/${localStorage.getItem('uuid')}`} className='nav-link'>
+                  <NavLink to={`/profile/${authLogin.data.uuid}`} className='nav-link'>
                     Profile
                   </NavLink>
                 </li>
@@ -129,15 +110,15 @@ export default function Navbar() {
                 </li>
               )}
             </ul>
-            {localStorage.getItem('token') ? (
+            {authLogin.data ? (
               <>
                 <span className='me-3 line-photo'></span>
                 <div className='contianer d-flex' id='users-logged'>
                   <Link to='/home'>
-                    <img src={userLogin?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover' />
+                    <img src={detailUser.data.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover' />
                   </Link>
                   <div className='d-flex-column ms-3 me-5 py-2'>
-                    <p className='mb-0 fw-medium'>{userLogin?.name}</p>
+                    <p className='mb-0 fw-medium'>{detailUser.data.name}</p>
                     <Link to='/' className='nav-link text-logout' onClick={handleLogout}>
                       Logout
                     </Link>

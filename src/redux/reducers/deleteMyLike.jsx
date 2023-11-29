@@ -7,19 +7,20 @@ const initialState = {
 };
 
 const deleteLikeReducers = (state = initialState, action) => {
-  if (action.type === 'DELETE_LIKE PENDING') {
+  if (action.type === 'DELETE_LIKE_PENDING') {
     return {
       ...state,
       isLoading: true,
     };
-  } else if (action.type === 'DELETE_LIKE SUCCESS') {
+  } else if (action.type === 'DELETE_LIKE_SUCCESS') {
     return {
       ...state,
       isLoading: false,
       isSuccess: true,
+      isError: false,
       data: action.payload,
     };
-  } else if (action.type === 'DELETE_LIKE ERROR') {
+  } else if (action.type === 'DELETE_LIKE_ERROR') {
     return {
       ...state,
       isLoading: false,

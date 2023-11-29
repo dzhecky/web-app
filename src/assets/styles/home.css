@@ -12,6 +12,10 @@ header {
   top: 3px;
 }
 
+.my-tabs {
+  cursor: pointer !important;
+}
+
 .color-gray {
   color: #b6b6b6 !important;
 }

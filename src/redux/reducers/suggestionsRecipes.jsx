@@ -17,6 +17,7 @@ const suggestionsRecipesReducers = (state = initialState, action) => {
       ...state,
       isLoading: false,
       isSuccess: true,
+      isError: false,
       data: action.payload,
     };
   } else if (action.type === 'GET_SUGGESTIONS_RECIPES_ERROR') {

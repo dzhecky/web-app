@@ -3,13 +3,14 @@ import Swal from 'sweetalert2';
 
 const base_url = import.meta.env.VITE_BASE_URL;
 
-export const getMyRecipes = (page, limit) => async (dispatch) => {
+export const getMyRecipes = (page, limit) => async (dispatch, getState) => {
   let myRecipesUrl = `/recipe/show/myrecipes?page=${page}&limit=${limit}`;
   try {
     dispatch({ type: 'GET_MY_RECIPES_PENDING' });
+    let token = await getState().authLogin.data.token.accessToken;
     const result = await axios.get(base_url + myRecipesUrl, {
       headers: {
-        token: `${localStorage.getItem('token')}`,
+        token,
       },
     });
     dispatch({ payload: result.data, type: 'GET_MY_RECIPES_SUCCESS' });
@@ -18,13 +19,14 @@ export const getMyRecipes = (page, limit) => async (dispatch) => {
   }
 };
 
-export const getMyBookmark = (page, limit) => async (dispatch) => {
+export const getMyBookmark = (page, limit) => async (dispatch, getState) => {
   let myBookmarkUrl = `/event/bookmarked?page=${page}&limit=${limit}`;
   try {
     dispatch({ type: 'GET_MY_BOOKMARK_PENDING' });
+    let token = await getState().authLogin.data.token.accessToken;
     const result = await axios.get(base_url + myBookmarkUrl, {
       headers: {
-        token: `${localStorage.getItem('token')}`,
+        token,
       },
     });
     dispatch({ payload: result.data, type: 'GET_MY_BOOKMARK_SUCCESS' });
@@ -33,13 +35,14 @@ export const getMyBookmark = (page, limit) => async (dispatch) => {
   }
 };
 
-export const getMyLike = (page, limit) => async (dispatch) => {
+export const getMyLike = (page, limit) => async (dispatch, getState) => {
   let myLikeUrl = `/event/liked?page=${page}&limit=${limit}`;
   try {
     dispatch({ type: 'GET_MY_LIKE_PENDING' });
+    let token = await getState().authLogin.data.token.accessToken;
     const result = await axios.get(base_url + myLikeUrl, {
       headers: {
-        token: `${localStorage.getItem('token')}`,
+        token,
       },
     });
     dispatch({ payload: result.data, type: 'GET_MY_LIKE_SUCCESS' });
@@ -48,13 +51,14 @@ export const getMyLike = (page, limit) => async (dispatch) => {
   }
 };
 
-export const deleteMyRecipe = (id) => async (dispatch) => {
+export const deleteMyRecipe = (id) => async (dispatch, getState) => {
   let deleteRecipeUrl = `/recipe/${id}`;
   try {
     dispatch({ type: 'DELETE_RECIPES_PENDING' });
+    let token = await getState().authLogin.data.token.accessToken;
     const result = await axios.delete(base_url + deleteRecipeUrl, {
       headers: {
-        token: `${localStorage.getItem('token')}`,
+        token,
       },
     });
     dispatch({ payload: result.data, type: 'DELETE_RECIPES_SUCCESS' });
@@ -69,13 +73,14 @@ export const deleteMyRecipe = (id) => async (dispatch) => {
   }
 };
 
-export const deleteMyBookmark = (id) => async (dispatch) => {
+export const deleteMyBookmark = (id) => async (dispatch, getState) => {
   let deleteBookmarkUrl = `/event/bookmark/${id}`;
   try {
     dispatch({ type: 'DELETE_BOOKMARK_PENDING' });
+    let token = await getState().authLogin.data.token.accessToken;
     const result = await axios.delete(base_url + deleteBookmarkUrl, {
       headers: {
-        token: `${localStorage.getItem('token')}`,
+        token,
       },
     });
     dispatch({ payload: result.data, type: 'DELETE_BOOKMARK_SUCCESS' });
@@ -90,13 +95,14 @@ export const deleteMyBookmark = (id) => async (dispatch) => {
   }
 };
 
-export const deleteMyLike = (id) => async (dispatch) => {
+export const deleteMyLike = (id) => async (dispatch, getState) => {
   let deleteLikeUrl = `/event/like/${id}`;
   try {
     dispatch({ type: 'DELETE_LIKE_PENDING' });
+    let token = await getState().authLogin.data.token.accessToken;
     const result = await axios.delete(base_url + deleteLikeUrl, {
       headers: {
-        token: `${localStorage.getItem('token')}`,
+        token,
       },
     });
     dispatch({ payload: result.data, type: 'DELETE_LIKE_SUCCESS' });

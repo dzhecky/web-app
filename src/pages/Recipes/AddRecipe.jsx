@@ -13,15 +13,12 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import '../../assets/styles/utility.css';
 import '../../assets/styles/addRecipe.css';
-import { getMyRecipes } from '../../redux/actions/home';
-import { Link } from 'react-router-dom';
 
 // const base_url = import.meta.env.VITE_BASE_URL;
 
 export default function AddRecipe() {
   const navigate = useNavigate();
   const [photo, setPhoto] = useState();
-  // const [category, setCategory] = useState({});
   const [inputData, setInputData] = useState({
     photo_url: '',
     title: '',
@@ -57,7 +54,7 @@ export default function AddRecipe() {
     bodyData.append('ingredients', inputData.ingredients);
     bodyData.append('id_category', inputData.category_id);
 
-    dispatch(postRecipes(bodyData));
+    dispatch(postRecipes(bodyData, navigate));
   };
 
   const handlePostData = (event) => {

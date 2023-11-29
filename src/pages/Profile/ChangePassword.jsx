@@ -1,24 +1,28 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useState } from 'react';
-import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useDispatch, useSelector, useStore } from 'react-redux';
+
+import { changePasswordAction } from '../../redux/actions/user';
 
 import '../../assets/styles/utility.css';
 import '../../assets/styles/profile.css';
 
-const base_url = import.meta.env.VITE_BASE_URL;
-
 export default function ChangePassword() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [newPassword, setNewPasswword] = useState({
     password: '',
   });
 
+  const store = useStore();
+  const dispatch = useDispatch();
+  const changePassword = useSelector((state) => state.changePassword);
+  let email = store.getState().authLogin.data.email;
+
   const [oldPassword, setOldpassword] = useState({
-    email: localStorage.getItem('email'),
+    email,
     password: '',
   });
 
@@ -27,7 +31,6 @@ export default function ChangePassword() {
       ...newPassword,
       [field]: e,
     });
-    console.log(newPassword);
   };
 
   const onChangeOldPassword = (e, field) => {
@@ -35,41 +38,19 @@ export default function ChangePassword() {
       ...oldPassword,
       [field]: e,
     });
-    console.log(oldPassword);
   };
 
-  const changePassword = (id) => {
-    let bodyData = new FormData();
-    bodyData.append('password', newPassword.password);
-
-    axios
-      .put(base_url + `/users/${id}`, bodyData, {
-        headers: {
-          token: `${localStorage.getItem('token')}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then((res) => {
-        console.log('success update data!');
-        console.log(res);
-        Swal.fire({
-          title: 'Success!',
-          text: 'Success update data, please login with new password',
-          icon: 'success',
-        });
-        localStorage.clear();
-        navigate('/login');
-      })
-      .catch((err) => {
-        console.log('failed update data!');
-        console.log(err);
-        Swal.fire({
-          title: 'Failed!',
-          text: `error :  ${err.response.data.messsage}`,
-          icon: 'error',
-        });
-      });
-  };
+  if (changePassword.isLoading) {
+    Swal.fire({
+      title: 'Updating your password...',
+      html: 'Please wait...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  }
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -90,27 +71,10 @@ export default function ChangePassword() {
       });
     }
 
-    axios
-      .post(
-        base_url + `/auth/login`,
-        {
-          email: oldPassword.email,
-          password: oldPassword.password,
-        },
-        { headers: { 'content-type': 'application/x-www-form-urlencoded' } }
-      )
-      .then((res) => {
-        console.log(res);
-        changePassword(id);
-      })
-      .catch((err) => {
-        console.log(err);
-        Swal.fire({
-          title: 'Failed!',
-          text: `error :  Incorrect old password, please enter the correct old password`,
-          icon: 'error',
-        });
-      });
+    let bodyData = new FormData();
+    bodyData.append('password', newPassword.password);
+
+    dispatch(changePasswordAction(oldPassword.email, oldPassword.password, bodyData));
   };
 
   return (

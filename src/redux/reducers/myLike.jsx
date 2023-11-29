@@ -17,6 +17,7 @@ const myLikeReducers = (state = initialState, action) => {
       ...state,
       isLoading: false,
       isSuccess: true,
+      isError: false,
       data: action.payload,
     };
   } else if (action.type === 'GET_MY_LIKE_ERROR') {

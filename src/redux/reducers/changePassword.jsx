@@ -6,13 +6,13 @@ const initialState = {
   errorMessage: '',
 };
 
-const categoryReducers = (state = initialState, action) => {
-  if (action.type === 'GET_CATEGORY_PENDING') {
+const changePasswordReducers = (state = initialState, action) => {
+  if (action.type === 'CHANGE_PASSWORD_PENDING') {
     return {
       ...state,
       isLoading: true,
     };
-  } else if (action.type === 'GET_CATEGORY_SUCCESS') {
+  } else if (action.type === 'CHANGE_PASSWORD_SUCCESS') {
     return {
       ...state,
       isLoading: false,
@@ -20,7 +20,7 @@ const categoryReducers = (state = initialState, action) => {
       isError: false,
       data: action.payload,
     };
-  } else if (action.type === 'GET_CATEGORY_ERROR') {
+  } else if (action.type === 'CHANGE_PASSWORD_ERROR') {
     return {
       ...state,
       isLoading: false,
@@ -33,4 +33,4 @@ const categoryReducers = (state = initialState, action) => {
   }
 };
 
-export default categoryReducers;
+export default changePasswordReducers;

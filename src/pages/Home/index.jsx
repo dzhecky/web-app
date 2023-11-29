@@ -186,7 +186,7 @@ export default function Home() {
         {/* <!-- Hero Section Start --> */}
         <header className='container d-sm-flex align-items-center justify-content-between' id='hero'>
           {/* <a className='text-decoration-none text-dark'> */}
-          <div className='d-flex align-items-center' id='users-avatar' onClick={() => toDetailPorifile(localStorage.getItem('uuid'))}>
+          <div className='d-flex align-items-center' id='users-avatar' onClick={() => toDetailPorifile(detailUser.data?.uuid)}>
             <span className='me-3 line-photo-user'></span>
             <img src={detailUser.data?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
             <div className='d-flex flex-column ms-3 h-100 justify-content-center'>
@@ -207,21 +207,21 @@ export default function Home() {
             <ul className='nav nav-tabs d-flex justify-content-between'>
               <li className='nav-item'>
                 <h4 className='px-0'>
-                  <p className={toggleTabs === 1 ? 'nav-link px-0 tab-active color-gray' : 'nav-link px-0 color-gray'} onClick={() => handleTabActive(1)}>
+                  <p className={toggleTabs === 1 ? 'my-tabs nav-link px-0 tab-active color-gray' : 'my-tabs nav-link px-0 color-gray icon-link'} onClick={() => handleTabActive(1)}>
                     Recipes
                   </p>
                 </h4>
               </li>
               <li className='nav-item'>
                 <h4>
-                  <p className={toggleTabs === 2 ? 'nav-link px-0 tab-active color-gray' : 'nav-link px-0 color-gray'} onClick={() => handleTabActive(2)}>
+                  <p className={toggleTabs === 2 ? 'my-tabs nav-link px-0 tab-active color-gray' : 'my-tabs nav-link px-0 color-gray'} onClick={() => handleTabActive(2)}>
                     Bookmarked
                   </p>
                 </h4>
               </li>
               <li className='nav-item'>
                 <h4>
-                  <p className={toggleTabs === 3 ? 'nav-link px-0 tab-active color-gray' : 'nav-link px-0 color-gray'} onClick={() => handleTabActive(3)}>
+                  <p className={toggleTabs === 3 ? 'my-tabs nav-link px-0 tab-active color-gray' : 'my-tabs nav-link px-0 color-gray'} onClick={() => handleTabActive(3)}>
                     Liked
                   </p>
                 </h4>
