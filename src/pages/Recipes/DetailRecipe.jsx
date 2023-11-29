@@ -152,7 +152,7 @@ export default function DetailRecipe() {
           <img src={detailRecipe.data?.photo_author} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
           <div className='d-flex flex-column ms-3 h-100 justify-content-center'>
             <p className='mb-0 fw-medium'>{detailRecipe.data?.author}</p>
-            <p className='text-recipe mb-0'>{countRecipes?.data.count} Recipes</p>
+            <p className='text-recipe mb-0'>{countRecipes?.data?.count} Recipes</p>
           </div>
         </div>
         <div className='text-sm-end text-sm-start fw-medium pt-3 ps-4' id='users-status'>
