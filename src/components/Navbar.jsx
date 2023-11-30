@@ -11,6 +11,7 @@ import '../assets/styles/navbar.css';
 export default function Navbar() {
   const dispatch = useDispatch();
   const authLogin = useSelector((state) => state.authLogin);
+  const detailUser = useSelector((state) => state.detailUser);
 
   const handleLogout = () => {
     dispatch(logoutAction());
@@ -114,10 +115,10 @@ export default function Navbar() {
                 <span className='me-3 line-photo'></span>
                 <div className='contianer d-flex' id='users-logged'>
                   <Link to='/home'>
-                    <img src={authLogin.data.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover' />
+                    <img src={detailUser?.data?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover' />
                   </Link>
                   <div className='d-flex-column ms-3 me-5 py-2'>
-                    <p className='mb-0 fw-medium'>{authLogin.data.name}</p>
+                    <p className='mb-0 fw-medium'>{detailUser?.data?.name}</p>
                     <Link to='/' className='nav-link text-logout' onClick={handleLogout}>
                       Logout
                     </Link>
