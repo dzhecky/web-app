@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
 
 import { logoutAction } from '../redux/actions/authLogout';
 
@@ -14,7 +15,22 @@ export default function Navbar() {
   const detailUser = useSelector((state) => state.detailUser);
 
   const handleLogout = () => {
-    dispatch(logoutAction());
+    Swal.fire({
+      icon: 'warning',
+      title: 'Confirmation',
+      text: 'Are you sure want to logout?',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(logoutAction());
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+      }
+    });
+
     return;
   };
 
@@ -119,9 +135,9 @@ export default function Navbar() {
                   </Link>
                   <div className='d-flex-column ms-3 me-5 py-2'>
                     <p className='mb-0 fw-medium'>{detailUser?.data?.name}</p>
-                    <Link to='/' className='nav-link text-logout' onClick={handleLogout}>
+                    <span className='nav-link text-logout' onClick={handleLogout}>
                       Logout
-                    </Link>
+                    </span>
                   </div>
                 </div>
               </>
