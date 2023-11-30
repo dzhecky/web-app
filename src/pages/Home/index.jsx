@@ -2,7 +2,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
 import Swal from 'sweetalert2';
 import Paginations from '../../components/Paginations';
@@ -188,7 +188,9 @@ export default function Home() {
           {/* <a className='text-decoration-none text-dark'> */}
           <div className='d-flex align-items-center' id='users-avatar' onClick={() => toDetailPorifile(detailUser.data?.uuid)}>
             <span className='me-3 line-photo-user'></span>
-            <img src={detailUser.data?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
+            <Link to={`/profile/${detailUser.data?.uuid}`}>
+              <img src={detailUser.data?.photo} alt='users-photo' width='64' height='64' className='d-inline-blok rounded-circle object-fit-cover ms-0' />
+            </Link>
             <div className='d-flex flex-column ms-3 h-100 justify-content-center'>
               <p className='mb-0 fw-medium'>{detailUser.data?.name}</p>
               <p className='text-recipe mb-0'>{myRecipes.data?.data.length !== 0 ? myRecipes.data?.pagination?.totalRows : 0} Recipes</p>

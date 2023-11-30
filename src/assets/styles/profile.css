@@ -46,11 +46,16 @@
   text-decoration: none;
 }
 
-.input-name,
 .input-email,
 .old-password,
 .new-password {
   color: #8692a6 !important;
+  border: 1px solid #8692a6 !important;
+  padding: 15px 10px;
+}
+
+.input-name {
+  color: black !important;
   border: 1px solid #8692a6 !important;
   padding: 15px 10px;
 }

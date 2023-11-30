@@ -11,6 +11,8 @@ import '../../assets/styles/utility.css';
 import '../../assets/styles/profile.css';
 
 export default function ChangePassword() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const { id } = useParams();
   const [newPassword, setNewPasswword] = useState({
     password: '',
@@ -85,11 +87,21 @@ export default function ChangePassword() {
             <h4 className='text-center color-primary fw-semibold mt-5 pt-5 mb-5'>Change Your Password Here</h4>
             <div className='mb-3 name mx-auto'>
               <label className='form-label'>Old Password</label>
-              <input type='password' name='password' className='form-control old-password' id='old-password' onChange={(e) => onChangeOldPassword(e.target.value, 'password')} />
+              <div className='input-group'>
+                <input type={showPassword ? 'text' : 'password'} name='password' className='form-control old-password' id='old-password' onChange={(e) => onChangeOldPassword(e.target.value, 'password')} />
+                <span className='input-group-text background-primary' id='showHide' onClick={() => setShowPassword(!showPassword)}>
+                  <i className={showPassword ? 'bi-eye-fill' : 'bi-eye-slash-fill'}></i>
+                </span>
+              </div>
             </div>
             <div className='mb-3 email mx-auto'>
               <label className='form-label'>New Password</label>
-              <input type='password' className='form-control new-password' name='password' id='new-passsword' onChange={(e) => onChangeNewPassword(e.target.value, 'password')} />
+              <div className='input-group'>
+                <input type={showNewPassword ? 'text' : 'password'} className='form-control new-password' name='password' id='new-passsword' onChange={(e) => onChangeNewPassword(e.target.value, 'password')} />
+                <span className='input-group-text background-primary' id='showHide' onClick={() => setShowNewPassword(!showNewPassword)}>
+                  <i className={showNewPassword ? 'bi-eye-fill' : 'bi-eye-slash-fill'}></i>
+                </span>
+              </div>
             </div>
             <div className='mb-3 change-password mx-auto'>
               <p>

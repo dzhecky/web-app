@@ -9,6 +9,7 @@ import { putPofile } from '../../redux/actions/user';
 
 import '../../assets/styles/utility.css';
 import '../../assets/styles/profile.css';
+import { Link } from 'react-router-dom';
 
 export default function Profile() {
   const [photo, setPhoto] = useState();
@@ -79,9 +80,9 @@ export default function Profile() {
     });
   };
 
-  const toChangePassword = (id) => {
-    navigate(`/change-password/${id}`);
-  };
+  // const toChangePassword = (id) => {
+  //   navigate(`/change-password/${id}`);
+  // };
 
   const onChangePhoto = (e) => {
     setPhoto(e.target.files[0]);
@@ -114,14 +115,14 @@ export default function Profile() {
               <label htmlFor='exampleInputEmail1' className='form-label'>
                 Email
               </label>
-              <input type='email' className='form-control input-email' id='exampleInputEmail1' value={detailUser?.data?.email} aria-describedby='emailHelp' />
+              <input type='email' className='form-control input-email' id='exampleInputEmail1' value={detailUser?.data?.email} aria-describedby='emailHelp' disabled />
             </div>
             <div className='mb-3 change-password mx-auto'>
               <p>
                 Change password?
-                <a className='color-primary ms-1' onClick={() => toChangePassword(detailUser.data.uuid)}>
+                <Link to={`/change-password/${detailUser.data.uuid}`} className='color-primary ms-1'>
                   Click here
-                </a>
+                </Link>
               </p>
               <button type='submit' className='btn btn-update-profile background-primary text-white'>
                 Update Profile

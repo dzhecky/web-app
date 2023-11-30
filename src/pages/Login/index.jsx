@@ -12,6 +12,7 @@ import '../../assets/styles/auth.css';
 import logoApp from '../../assets/icon/barbecue 1.svg';
 
 export default function Login() {
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const [form, setForm] = useState({
     email: '',
@@ -79,7 +80,12 @@ export default function Login() {
             </div>
             <div className='mb-3'>
               <label className='form-label text-label'>Password</label>
-              <input type='password' className='form-control p-3 text-input' id='password' placeholder='Password' onChange={(e) => onChangeInput(e.target.value, 'password')} />
+              <div className='input-group'>
+                <input type={showPassword ? 'text' : 'password'} className='form-control p-3 text-input input-group' id='password' placeholder='Password' onChange={(e) => onChangeInput(e.target.value, 'password')} />
+                <span className='input-group-text background-primary' id='showHide' onClick={() => setShowPassword(!showPassword)}>
+                  <i className={showPassword ? 'bi-eye-fill' : 'bi-eye-slash-fill'}></i>
+                </span>
+              </div>
             </div>
             <div className='mb-3 form-check'>
               <input type='checkbox' className='form-check-input' id='terms' onChange={(e) => onChangeInput(e.target.checked, 'terms')} />

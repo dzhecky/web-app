@@ -22,7 +22,7 @@ export default function SearchRecipes() {
   const [message, setMessage] = useState('');
   const [idCategory, setIdCategory] = useState();
   const [popular, setPopular] = useState();
-  const [toggleBtnCategory, setToggleBtnCategory] = useState();
+  const [toggleBtnCategory, setToggleBtnCategory] = useState(3);
 
   const dispatch = useDispatch();
   const category = useSelector((state) => state.category);
