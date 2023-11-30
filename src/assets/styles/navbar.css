@@ -7,10 +7,15 @@
   font-weight: 500;
 }
 
-.text-logout,
 .text-recipe {
   color: #000 !important;
   font-weight: 900;
+}
+
+.text-logout {
+  color: #000 !important;
+  font-weight: 900;
+  cursor: pointer;
 }
 
 .nav-shadow {
