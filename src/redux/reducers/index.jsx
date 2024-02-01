@@ -25,6 +25,7 @@ import authResetPassword from './authResetPassword';
 import editProfile from './editProfile';
 import changePassword from './changePassword';
 import putPassword from './putPassword';
+import authActivateAccount from './authActivateAccount';
 
 const rootReducers = combineReducers({
   suggestionsRecipes,
@@ -53,6 +54,7 @@ const rootReducers = combineReducers({
   editProfile,
   changePassword,
   putPassword,
+  authActivateAccount,
 });
 
 export default rootReducers;

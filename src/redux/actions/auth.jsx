@@ -58,9 +58,38 @@ export const registerAction = (name, email, password, navigate) => async (dispat
       text: result.data.message,
       icon: 'success',
     });
-    navigate('/login');
+    navigate('/activate-account');
   } catch (err) {
     dispatch({ payload: err.response.data, type: 'AUTH_REGISTER_ERROR' });
+    Swal.fire({
+      title: 'Failed!',
+      text: `error :  ${err.response.data.messsage || err.response.data.message} `,
+      icon: 'error',
+    });
+  }
+};
+
+export const activateAccountAction = (uuid, otp, navigate) => async (dispatch) => {
+  let activateUrl = `/auth/activate/${uuid}`;
+  let bodyData = {
+    otp,
+  };
+  try {
+    dispatch({ type: 'AUTH_ACTIVATE_ACCOUNT_PENDING' });
+    const result = await axios.post(base_url + activateUrl, bodyData, {
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+    });
+    dispatch({ payload: result.data, type: 'AUTH_ACTIVATE_ACCOUNT_SUCCESS' });
+    Swal.fire({
+      title: 'Success!',
+      text: result.data.message,
+      icon: 'success',
+    });
+    navigate('/login');
+  } catch (err) {
+    dispatch({ payload: err.response.data, type: 'AUTH_ACTIVATE_ACCOUNT_ERROR' });
     Swal.fire({
       title: 'Failed!',
       text: `error :  ${err.response.data.messsage || err.response.data.message} `,
